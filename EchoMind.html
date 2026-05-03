@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EchoMind — AI Interview Training</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 15px; }
+  body { font-family: 'Open Sans', sans-serif; background: #f5f5f7; color: #1c1c1c; }
+
+  /* OSACO brand tokens */
+  :root {
+    /* Primary */
+    --kimb:    #686CA4;   /* Kimberlite */
+    --kimb-d:  #4a4e7a;   /* darkened */
+    --kimb-l:  #8589be;   /* lightened */
+    --kimb-p:  #eeeef6;   /* pale tint */
+    --kimb-t:  #e4e4f0;   /* soft tint */
+
+    /* Secondary */
+    --corfu:   #008CB0;   /* Corfu teal */
+    --corfu-l: #e0f4fa;
+    --plum:    #956188;   /* Plum */
+    --plum-l:  #f3eaf1;
+    --energized: #D1CD5B; /* Energized yellow */
+    --daring:  #FEC340;   /* Daring amber */
+    --felt:    #70C097;   /* Felt Green */
+
+    /* EchoMind accent (from logo) */
+    --echo-mg: #d520d5;   /* EchoMind magenta */
+    --echo-cy: #30c8e8;   /* EchoMind cyan */
+
+    /* Neutrals */
+    --ink:     #1c1c1c;
+    --ink-mid: #3a3a4a;
+    --ink-mute:#6b6b80;
+    --ink-lt:  #9999b0;
+    --surface: #f5f5f7;
+    --white:   #ffffff;
+    --border:  #d8d8e8;
+    --border-l:#eaeaf2;
+
+    /* Status */
+    --success: #1a9070;
+    --warn:    #b07820;
+    --danger:  #b83030;
+  }
+
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--border-l); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  h1, h2, h3, h4, h5 { font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.04em; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+
+/* ── colour constants (mirror CSS vars for JS use) ─────── */
+const C = {
+  kimb:'#686CA4', kimbD:'#4a4e7a', kimbL:'#8589be', kimbP:'#eeeef6', kimbT:'#e4e4f0',
+  corfu:'#008CB0', corfuL:'#e0f4fa',
+  plum:'#956188', plumL:'#f3eaf1',
+  energized:'#D1CD5B', daring:'#FEC340', felt:'#70C097',
+  echoMg:'#d520d5', echoCy:'#30c8e8',
+  ink:'#1c1c1c', inkMid:'#3a3a4a', inkMute:'#6b6b80', inkLt:'#9999b0',
+  surface:'#f5f5f7', white:'#ffffff', border:'#d8d8e8', borderL:'#eaeaf2',
+  success:'#1a9070', warn:'#b07820', danger:'#b83030',
+};
+
+/* ── Logo: use actual image asset ──────────────────────── */
+function EchoMindLogo({ height = 32 }) {
+  return <img src="assets/echomind-logo.png" alt="EchoMind" style={{ height, width:'auto', display:'block' }} />;
+}
+function OsacoLogo({ height = 28 }) {
+  return <img src="assets/osaco-logo.png" alt="OSACO" style={{ height, width:'auto', display:'block', filter:'brightness(0) invert(1)' }} />;
+}
+
+/* ── Pill label ────────────────────────────────────────── */
+function PillLabel({ children, color = C.kimb }) {
+  return (
+    <span style={{
+      display:'inline-block', padding:'3px 14px',
+      background: color + '18', color: color,
+      borderRadius: 2, fontSize: '0.68rem', fontWeight: 700,
+      letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 10,
+      border: `1px solid ${color}40`,
+    }}>{children}</span>
+  );
+}
+
+/* ── Section heading ───────────────────────────────────── */
+function SectionHeading({ label, title, subtitle }) {
+  return (
+    <div style={{ marginBottom: 28 }}>
+      <PillLabel>{label}</PillLabel>
+      <h1 style={{ fontFamily:'Bebas Neue', fontSize:'2.6rem', color: C.kimbD, lineHeight:1.1, letterSpacing:'0.05em' }}>{title}</h1>
+      {subtitle && <p style={{ color: C.inkMute, marginTop: 7, fontSize:'0.88rem', lineHeight: 1.6 }}>{subtitle}</p>}
+    </div>
+  );
+}
+
+/* ── Card ──────────────────────────────────────────────── */
+function Card({ children, style = {}, topBorderColor, onClick }) {
+  return (
+    <div onClick={onClick} style={{
+      background: C.white, border:`1.5px solid ${C.border}`, borderRadius: 4,
+      overflow:'hidden', cursor: onClick ? 'pointer' : 'default',
+      ...(topBorderColor ? { borderTop:`3px solid ${topBorderColor}` } : {}),
+      ...style,
+    }}>{children}</div>
+  );
+}
+
+/* ── Primary button ────────────────────────────────────── */
+function PrimaryBtn({ children, onClick, disabled, color = C.kimb, style = {} }) {
+  const [hov, setHov] = useState(false);
+  const bg = disabled ? '#bbb' : hov ? C.kimbD : color;
+  return (
+    <button onClick={onClick} disabled={disabled}
+      onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
+      style={{
+        background: bg, color:'#fff', border:'none', borderRadius: 3,
+        padding:'10px 24px', fontFamily:'Open Sans', fontWeight:700,
+        fontSize:'0.83rem', cursor: disabled ? 'not-allowed' : 'pointer',
+        letterSpacing:'0.06em', textTransform:'uppercase',
+        transition:'background 0.18s', ...style,
+      }}>{children}</button>
+  );
+}
+
+/* ── Ghost button ──────────────────────────────────────── */
+function GhostBtn({ children, onClick, color = C.kimb, style = {} }) {
+  const [hov, setHov] = useState(false);
+  return (
+    <button onClick={onClick}
+      onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
+      style={{
+        background: hov ? color + '10' : 'transparent',
+        color: hov ? color : C.inkMid,
+        border:`1.5px solid ${hov ? color : C.border}`,
+        borderRadius: 3, padding:'9px 20px',
+        fontFamily:'Open Sans', fontWeight:700, letterSpacing:'0.06em', textTransform:'uppercase',
+        fontSize:'0.78rem', cursor:'pointer', transition:'all 0.18s', ...style,
+      }}>{children}</button>
+  );
+}
+
+/* ── Progress bar ──────────────────────────────────────── */
+function ProgressBar({ value, color = C.kimb }) {
+  return (
+    <div style={{ background: C.borderL, borderRadius: 2, height: 7, overflow:'hidden' }}>
+      <div style={{ width:`${value}%`, height:'100%', background: color, borderRadius: 2, transition:'width 0.6s' }} />
+    </div>
+  );
+}
+
+/* ── Divider ───────────────────────────────────────────── */
+function Divider({ style = {} }) {
+  return <hr style={{ border:'none', borderTop:`1.5px solid ${C.borderL}`, ...style }} />;
+}
+
+/* ══════════════════════════════════════════════════════════
+   NAV BAR
+══════════════════════════════════════════════════════════ */
+function NavBar({ page, setPage }) {
+  const pages = ['Scenarios','Interview','Feedback','Account','Instructor'];
+  return (
+    <nav style={{
+      position:'sticky', top:0, zIndex:100,
+      background: C.kimbD,
+      display:'flex', alignItems:'center',
+      padding:'0 28px', height: 60,
+    }}>
+      {/* EchoMind logo */}
+      <div style={{ marginRight: 40 }}>
+        <EchoMindLogo height={30} />
+      </div>
+
+      {/* Nav items */}
+      <div style={{ display:'flex', alignItems:'center', gap:2, flex:1 }}>
+        {pages.map(p => {
+          const active = page === p;
+          return (
+            <button key={p} onClick={() => setPage(p)} style={{
+              background:'none', border:'none', cursor:'pointer',
+              fontFamily:'Open Sans', fontWeight: active ? 700 : 400,
+              fontSize:'0.82rem', letterSpacing:'0.07em', textTransform:'uppercase',
+              color: active ? '#fff' : 'rgba(255,255,255,0.58)',
+              padding:'0 16px', height:59, position:'relative',
+              transition:'color 0.15s',
+            }}>
+              {p}
+              {active && <div style={{ position:'absolute', bottom:0, left:8, right:8, height:3, background: C.energized, borderRadius:'2px 2px 0 0' }} />}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Right: avatar */}
+      <div style={{ display:'flex', alignItems:'center', gap:14 }}>
+        <div style={{
+          width:34, height:34, borderRadius: 3,
+          background:`linear-gradient(135deg, ${C.echoMg}, ${C.echoCy})`,
+          display:'flex', alignItems:'center', justifyContent:'center',
+          color:'#fff', fontFamily:'Bebas Neue', fontSize:'0.95rem', letterSpacing:'0.08em',
+        }}>JM</div>
+      </div>
+    </nav>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════
+   PAGE: SCENARIOS
+══════════════════════════════════════════════════════════ */
+function ScenariosPage({ setPage }) {
+  const [selected, setSelected] = useState(null);
+  const [videoPlaying, setVideoPlaying] = useState(false);
+
+  const scenarios = [
+    {
+      id:'law', accentColor: C.kimbD, domain:'Law Enforcement', title:'Investigative Interview',
+      desc:'Practice structured questioning techniques in high-stakes criminal investigation settings with resistant subjects.',
+      count:12, tag:'PEACE Model',
+    },
+    {
+      id:'mil', accentColor: C.corfu, domain:'Military', title:'Intelligence Debrief',
+      desc:'Conduct HUMINT debriefs and source assessment interviews aligned with military operational protocols.',
+      count:8, tag:'HUMINT',
+    },
+    {
+      id:'sales', accentColor: C.plum, domain:'Sales', title:'Discovery & Closing',
+      desc:'Master consultative discovery conversations and objection handling to move prospects through the pipeline.',
+      count:15, tag:'Consultative',
+    },
+  ];
+
+  return (
+    <div>
+      {/* Hero banner */}
+      <div style={{
+        background: `linear-gradient(105deg, ${C.kimbD} 0%, ${C.kimb} 60%, ${C.corfu} 100%)`,
+        padding:'52px 40px 44px',
+      }}>
+        <PillLabel color={C.energized}>Training Scenarios</PillLabel>
+        <h1 style={{ fontFamily:'Bebas Neue', fontSize:'3.2rem', color:'#fff', lineHeight:1.1, maxWidth:560, letterSpacing:'0.05em', marginBottom:12 }}>
+          Choose your domain,<br />start your session
+        </h1>
+        <p style={{ color:'rgba(255,255,255,0.68)', fontSize:'0.9rem', maxWidth:500, lineHeight:1.7 }}>
+          EchoMind's AI avatars adapt to your chosen scenario, providing realistic, psychologically grounded interview subjects for evidence-based training.
+        </p>
+        <div style={{ display:'flex', gap:40, marginTop:32 }}>
+          {[['10', 'Scenarios available'], ['8', 'Sessions completed'], ['92%', 'Trainee satisfaction']].map(([n, l]) => (
+            <div key={l}>
+              <div style={{ fontFamily:'Bebas Neue', fontSize:'2.4rem', color: C.energized, letterSpacing:'0.04em', lineHeight:1 }}>{n}</div>
+              <div style={{ fontSize:'0.7rem', color:'rgba(255,255,255,0.5)', letterSpacing:'0.1em', textTransform:'uppercase', marginTop:4 }}>{l}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div style={{ padding:'36px 40px' }}>
+
+        {/* Scenario cards */}
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:20, marginBottom:36 }}>
+          {scenarios.map(s => {
+            const isSelected = selected === s.id;
+            return (
+              <Card key={s.id} topBorderColor={s.accentColor}
+                onClick={() => setSelected(s.id)}
+                style={{
+                  transition:'all 0.18s',
+                  boxShadow: isSelected
+                    ? `0 0 0 2.5px ${s.accentColor}, 0 6px 24px ${s.accentColor}22`
+                    : '0 2px 8px rgba(0,0,0,0.05)',
+                }}>
+                <div style={{ padding:'22px 20px' }}>
+                  <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', marginBottom:14 }}>
+                    <span style={{ fontSize:'0.65rem', fontWeight:700, letterSpacing:'0.1em', color: s.accentColor, textTransform:'uppercase' }}>{s.domain}</span>
+                    <span style={{ background: C.surface, color: C.inkMute, fontSize:'0.65rem', fontWeight:700, padding:'3px 8px', borderRadius:2, letterSpacing:'0.06em' }}>
+                      {s.tag}
+                    </span>
+                  </div>
+                  <h3 style={{ fontFamily:'Bebas Neue', fontSize:'1.55rem', color: C.kimbD, marginBottom:10, letterSpacing:'0.04em' }}>{s.title}</h3>
+                  <p style={{ fontSize:'0.82rem', color: C.inkMute, lineHeight:1.6 }}>{s.desc}</p>
+                  <div style={{ marginTop:16, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+                    <span style={{ fontSize:'0.72rem', color: C.inkLt }}>{s.count} scenarios</span>
+                    {isSelected && (
+                      <span style={{ display:'flex', alignItems:'center', gap:5, color: s.accentColor, fontSize:'0.72rem', fontWeight:700, letterSpacing:'0.06em' }}>
+                        <span style={{ width:7, height:7, borderRadius:'50%', background: s.accentColor, display:'inline-block' }} />
+                        SELECTED
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </Card>
+            );
+          })}
+        </div>
+
+        <Divider style={{ marginBottom:36 }} />
+
+        {/* Video preview */}
+        <div style={{ background: C.inkMid, borderRadius:6, overflow:'hidden', marginBottom:32 }}>
+          <div style={{ padding:'18px 24px 0', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+            <div>
+              <div style={{ color:'rgba(255,255,255,0.45)', fontSize:'0.65rem', letterSpacing:'0.1em', textTransform:'uppercase', marginBottom:4 }}>Preview</div>
+              <div style={{ color:'#fff', fontFamily:'Bebas Neue', fontSize:'1.35rem', letterSpacing:'0.05em' }}>Sample Interview Session</div>
+            </div>
+            <span style={{ background: C.kimbP, color: C.kimb, fontSize:'0.68rem', fontWeight:700, padding:'3px 12px', borderRadius:2, letterSpacing:'0.06em' }}>3:42</span>
+          </div>
+          <div style={{ margin:'16px 24px 24px', borderRadius:4, overflow:'hidden', position:'relative',
+            aspectRatio:'16/7', background:'#111827', display:'flex', alignItems:'center', justifyContent:'center' }}>
+            <div style={{ display:'flex', alignItems:'center', gap:3, opacity:0.25 }}>
+              {Array.from({length:70}, (_,i) => (
+                <div key={i} style={{ width:3, borderRadius:2,
+                  height: Math.abs(Math.sin(i*0.38)*28 + Math.cos(i*0.71)*14) + 4,
+                  background:`linear-gradient(to top, ${C.corfu}, ${C.kimb})` }} />
+              ))}
+            </div>
+            <button onClick={() => setVideoPlaying(!videoPlaying)} style={{
+              position:'absolute', width:62, height:62, borderRadius:'50%',
+              background:'transparent', border:`2.5px solid ${C.energized}`,
+              display:'flex', alignItems:'center', justifyContent:'center',
+              cursor:'pointer', transition:'all 0.18s',
+            }}>
+              {videoPlaying
+                ? <span style={{ color: C.energized, fontSize:20 }}>⏸</span>
+                : <span style={{ color: C.energized, fontSize:22, marginLeft:4 }}>▶</span>
+              }
+            </button>
+          </div>
+        </div>
+
+        {/* Actions */}
+        <div style={{ display:'flex', gap:12, alignItems:'center' }}>
+          <PrimaryBtn disabled={!selected} onClick={() => setPage('Interview')}
+            style={{ padding:'13px 36px', fontSize:'0.85rem' }}>
+            Begin Session →
+          </PrimaryBtn>
+          <GhostBtn onClick={() => setPage('Feedback')}>View Sample Report</GhostBtn>
+          {!selected && <span style={{ color: C.inkLt, fontSize:'0.78rem' }}>Select a scenario above to begin</span>}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════
+   PAGE: INTERVIEW
+══════════════════════════════════════════════════════════ */
+function InterviewPage() {
+  const [seconds, setSeconds] = useState(847);
+
+  useEffect(() => {
+    const t = setInterval(() => setSeconds(s => s + 1), 1000);
+    return () => clearInterval(t);
+  }, []);
+
+  function fmt(s) {
+    return `${Math.floor(s/60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`;
+  }
+
+  return (
+    <div style={{ padding:'28px 32px' }}>
+      <div>
+        {/* Avatar viewport */}
+        <div style={{ background: C.inkMid, borderRadius:6, overflow:'hidden', position:'relative', aspectRatio:'16/10', marginBottom:16, display:'flex', alignItems:'center', justifyContent:'center' }}>
+          {/* Concentric rings — EchoMind motif */}
+          <svg viewBox="0 0 160 160" width={160} height={160} fill="none" style={{ opacity:0.18 }}>
+            {[70,56,42,28,14].map((r,i) => (
+              <circle key={i} cx={80} cy={80} r={r} stroke="white" strokeWidth={2} />
+            ))}
+          </svg>
+          {/* Silhouette */}
+          <svg viewBox="0 0 120 130" width={100} height={110} fill="none" style={{ position:'absolute' }}>
+            <circle cx="60" cy="38" r="26" fill={`rgba(255,255,255,0.18)`} />
+            <ellipse cx="60" cy="105" rx="38" ry="28" fill={`rgba(255,255,255,0.12)`} />
+          </svg>
+          {/* Name tag */}
+          <div style={{ position:'absolute', bottom:16, left:16,
+            fontFamily:'Open Sans', fontWeight:700, fontSize:'0.75rem', color: C.energized,
+            background:'rgba(0,0,0,0.55)', padding:'5px 12px', borderRadius:3,
+            letterSpacing:'0.08em', textTransform:'uppercase' }}>
+            Alex Reyes · Subject 04
+          </div>
+          {/* LIVE */}
+          <div style={{ position:'absolute', top:14, right:14, display:'flex', alignItems:'center', gap:6,
+            background:'rgba(184,48,48,0.9)', borderRadius:3, padding:'4px 10px' }}>
+            <div style={{ width:7, height:7, borderRadius:'50%', background:'#ff6666', animation:'blink 1.2s infinite' }} />
+            <span style={{ color:'#fff', fontSize:'0.65rem', fontWeight:700, letterSpacing:'0.12em' }}>LIVE</span>
+          </div>
+          {/* Timer */}
+          <div style={{ position:'absolute', bottom:16, right:16,
+            fontFamily:'Open Sans', fontWeight:700, fontSize:'0.82rem', color:'rgba(255,255,255,0.65)',
+            background:'rgba(0,0,0,0.45)', padding:'4px 10px', borderRadius:3, letterSpacing:'0.06em' }}>
+            {fmt(seconds)}
+          </div>
+        </div>
+
+      </div>
+
+      <style>{`@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.25} }`}</style>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════
+   PAGE: FEEDBACK
+══════════════════════════════════════════════════════════ */
+function ScoreRing({ score }) {
+  const r = 52, circ = 2 * Math.PI * r;
+  const offset = circ - (score / 100) * circ;
+  return (
+    <svg width={126} height={126} viewBox="0 0 126 126">
+      <circle cx={63} cy={63} r={r} fill="none" stroke={C.borderL} strokeWidth={10} />
+      <circle cx={63} cy={63} r={r} fill="none" stroke={C.kimb} strokeWidth={10}
+        strokeDasharray={circ} strokeDashoffset={offset}
+        strokeLinecap="round" transform="rotate(-90 63 63)" />
+      <text x={63} y={57} textAnchor="middle" fontFamily="Bebas Neue" fontSize="32" fill={C.kimbD} letterSpacing="2">{score}</text>
+      <text x={63} y={75} textAnchor="middle" fontFamily="Open Sans" fontSize="10" fill={C.inkMute}>out of 100</text>
+    </svg>
+  );
+}
+
+const SESSION_DATA = [
+  {
+    id:1, date:'3 May 2026', domain:'Law Enforcement', scenario:'Investigative Interview',
+    duration:'14:07', score:78, flag:'green',
+    metrics:[
+      { label:'Rapport Building', value:84, color: C.success },
+      { label:'Open-Ended Questions', value:72, color: C.kimb },
+      { label:'Active Listening', value:80, color: C.corfu },
+      { label:'Non-Leading Language', value:68, color: C.warn },
+    ],
+    notes:[
+      { type:'Strength', color: C.success, bg: C.felt+'15', text:'Strong use of open-ended questioning in the opening phase. Subject guided toward free narrative with minimal leading, demonstrating solid PEACE model awareness.' },
+      { type:'Develop', color: C.warn, bg: C.daring+'15', text:'Interruptions at 4:22 and 9:07 cut off developing threads. Practise active listening pauses — allow 3–5 seconds after each response.' },
+      { type:'Next Session', color: C.corfu, bg: C.corfu+'12', text:'Focus on Cognitive Interview techniques, particularly context reinstatement to increase information yield.' },
+    ],
+  },
+  {
+    id:2, date:'29 Apr 2026', domain:'Law Enforcement', scenario:'Witness Interview',
+    duration:'11:32', score:71, flag:'green',
+    metrics:[
+      { label:'Rapport Building', value:75, color: C.success },
+      { label:'Open-Ended Questions', value:68, color: C.kimb },
+      { label:'Active Listening', value:74, color: C.corfu },
+      { label:'Non-Leading Language', value:65, color: C.warn },
+    ],
+    notes:[
+      { type:'Strength', color: C.success, bg: C.felt+'15', text:'Good initial rapport established using mirroring techniques. Subject appeared comfortable and forthcoming in early exchanges.' },
+      { type:'Develop', color: C.warn, bg: C.daring+'15', text:'Several closed questions in the middle phase limited free narrative. Work on transitioning from closed to open probes more fluidly.' },
+      { type:'Next Session', color: C.corfu, bg: C.corfu+'12', text:'Practise the TEDS model (Tell, Explain, Describe, Show) for eliciting fuller responses.' },
+    ],
+  },
+  {
+    id:3, date:'22 Apr 2026', domain:'Military', scenario:'Intelligence Debrief',
+    duration:'18:44', score:65, flag:'amber',
+    metrics:[
+      { label:'Rapport Building', value:60, color: C.success },
+      { label:'Open-Ended Questions', value:70, color: C.kimb },
+      { label:'Active Listening', value:62, color: C.corfu },
+      { label:'Non-Leading Language', value:66, color: C.warn },
+    ],
+    notes:[
+      { type:'Strength', color: C.success, bg: C.felt+'15', text:'Consistent use of open probes showed progress from prior session. Subject narrative was largely undirected.' },
+      { type:'Develop', color: C.warn, bg: C.daring+'15', text:'Rapport indicators remained low — the subject showed signs of disengagement from the 10-minute mark. Consider softer bridging language.' },
+      { type:'Next Session', color: C.corfu, bg: C.corfu+'12', text:'Review HUMINT rapport-building protocols. Focus on non-verbal acknowledgement cues.' },
+    ],
+  },
+  {
+    id:4, date:'15 Apr 2026', domain:'Sales', scenario:'Discovery & Closing',
+    duration:'09:18', score:82, flag:'green',
+    metrics:[
+      { label:'Rapport Building', value:88, color: C.success },
+      { label:'Open-Ended Questions', value:80, color: C.kimb },
+      { label:'Active Listening', value:83, color: C.corfu },
+      { label:'Non-Leading Language', value:76, color: C.warn },
+    ],
+    notes:[
+      { type:'Strength', color: C.success, bg: C.felt+'15', text:'Excellent consultative framing throughout. Discovery questions surfaced genuine pain points and the close felt natural and unforced.' },
+      { type:'Develop', color: C.warn, bg: C.daring+'15', text:'Objection handling could be more structured — consider ACEE (Acknowledge, Clarify, Explore, Evidence) for resistant prospects.' },
+      { type:'Next Session', color: C.corfu, bg: C.corfu+'12', text:'Progress to multi-stakeholder discovery scenarios to build complexity.' },
+    ],
+  },
+];
+
+function FeedbackPage() {
+  const [view, setView] = useState('overall'); // 'overall' | 'sessions'
+  const [selected, setSelected] = useState(null);
+
+  const avgScore = Math.round(SESSION_DATA.reduce((s,d) => s + d.score, 0) / SESSION_DATA.length);
+  const avgMetrics = SESSION_DATA[0].metrics.map((m, mi) => ({
+    ...m,
+    value: Math.round(SESSION_DATA.reduce((s,d) => s + d.metrics[mi].value, 0) / SESSION_DATA.length),
+  }));
+  const flagColors = { green: C.success, amber: C.warn, red: C.danger };
+  const flagBg    = { green: C.felt+'20', amber: C.daring+'20', red:'#b8303020' };
+
+  const session = selected !== null ? SESSION_DATA.find(s => s.id === selected) : null;
+
+  return (
+    <div style={{ padding:'28px 32px' }}>
+      {/* Header + tab toggle */}
+      <div style={{ display:'flex', alignItems:'flex-end', justifyContent:'space-between', marginBottom:28 }}>
+        <SectionHeading label="Feedback" title="Performance Review" subtitle="" />
+
+      </div>
+
+      {/* ── OVERALL VIEW ── */}
+      {view === 'overall' && (
+        <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:24 }}>
+          {/* Left: aggregate score */}
+          <div style={{ display:'flex', flexDirection:'column', gap:20 }}>
+            <Card style={{ padding:'28px 24px' }}>
+              <div style={{ display:'flex', alignItems:'center', gap:24, marginBottom:28 }}>
+                <ScoreRing score={avgScore} />
+                <div>
+                  <div style={{ display:'inline-block', background: C.felt+'22', color: C.success,
+                    borderRadius:2, padding:'4px 12px', fontSize:'0.72rem', fontWeight:700,
+                    letterSpacing:'0.08em', textTransform:'uppercase', marginBottom:8 }}>
+                    ↑ Above Average
+                  </div>
+                  <h3 style={{ fontFamily:'Bebas Neue', fontSize:'1.8rem', color: C.kimbD, letterSpacing:'0.04em' }}>Overall Performance</h3>
+                  <div style={{ color: C.inkMute, fontSize:'0.82rem', marginTop:4 }}>8 of 10 sessions completed</div>
+                </div>
+              </div>
+              <div style={{ display:'flex', flexDirection:'column', gap:16 }}>
+                {avgMetrics.map(m => (
+                  <div key={m.label}>
+                    <div style={{ display:'flex', justifyContent:'space-between', marginBottom:6 }}>
+                      <span style={{ fontSize:'0.82rem', color: C.inkMid }}>{m.label}</span>
+                      <span style={{ fontSize:'0.82rem', fontWeight:700, color: m.color }}>{m.value}%</span>
+                    </div>
+                    <ProgressBar value={m.value} color={m.color} />
+                  </div>
+                ))}
+              </div>
+            </Card>
+
+            {/* Download report */}
+            <Card style={{ padding:'18px 20px' }}>
+              <h4 style={{ fontFamily:'Bebas Neue', fontSize:'1.1rem', color: C.kimbD, letterSpacing:'0.05em', marginBottom:14 }}>Reports</h4>
+              <div style={{ display:'flex', alignItems:'center', gap:14, padding:'12px 14px',
+                background: C.surface, borderRadius:3, border:`1.5px solid ${C.borderL}` }}>
+                <span style={{ fontSize:'1.3rem' }}>📄</span>
+                <div style={{ flex:1 }}>
+                  <div style={{ fontWeight:600, color: C.ink, fontSize:'0.85rem' }}>Full Performance Report</div>
+                  <div style={{ fontSize:'0.72rem', color: C.inkLt, marginTop:2 }}>PDF · 3 May 2026 · All sessions</div>
+                </div>
+                <GhostBtn style={{ padding:'6px 14px', fontSize:'0.72rem' }}>Download PDF</GhostBtn>
+              </div>
+            </Card>
+          </div>
+
+          {/* Right: score trend + session summary list */}
+          <div style={{ display:'flex', flexDirection:'column', gap:20 }}>
+            {/* Score trend */}
+            <Card style={{ padding:'22px 20px' }}>
+              <div style={{ display:'flex', alignItems:'baseline', justifyContent:'space-between', marginBottom:16 }}>
+                <h4 style={{ fontFamily:'Bebas Neue', fontSize:'1.1rem', color: C.kimbD, letterSpacing:'0.05em' }}>Score Trend</h4>
+                <span style={{ fontSize:'0.68rem', color: C.inkLt, fontStyle:'italic' }}>Example scenarios shown</span>
+              </div>
+              <div style={{ display:'flex', alignItems:'flex-end', gap:14, height:100 }}>
+                {[
+                  { label:'Law Enforcement', score:74, color: C.kimbD },
+                  { label:'Military', score:65, color: C.corfu },
+                  { label:'Sales', score:82, color: C.felt },
+                ].map((s, i) => (
+                  <div key={s.label} style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', gap:6 }}>
+                    <div style={{ fontSize:'0.75rem', fontWeight:700, color: s.color }}>{s.score}</div>
+                    <div style={{ width:'100%', borderRadius:'2px 2px 0 0',
+                      height:`${(s.score / 100) * 68}px`,
+                      background: s.color + '55',
+                      border:`2px solid ${s.color}`,
+                    }} />
+                    <div style={{ fontSize:'0.62rem', color: C.inkLt, textAlign:'center', lineHeight:1.3 }}>{s.label}</div>
+                  </div>
+                ))}
+              </div>
+            </Card>
+
+            {/* Session list summary */}
+            <Card>
+              <div style={{ padding:'14px 18px', borderBottom:`1.5px solid ${C.borderL}` }}>
+                <h4 style={{ fontFamily:'Bebas Neue', fontSize:'1.1rem', color: C.kimbD, letterSpacing:'0.05em' }}>Session History</h4>
+              </div>
+              <div style={{ display:'flex', flexDirection:'column' }}>
+                {[
+                  { id:1, domain:'Law Enforcement', scenario:'Investigative Interview', date:'3 May 2026', duration:'14:07', score:74, color: C.kimbD },
+                  { id:3, domain:'Military',         scenario:'Intelligence Debrief',    date:'22 Apr 2026', duration:'18:44', score:65, color: C.corfu },
+                  { id:4, domain:'Sales',            scenario:'Discovery & Closing',     date:'15 Apr 2026', duration:'09:18', score:82, color: C.felt },
+                ].map((s, i) => (
+                  <div key={s.id} style={{
+                    display:'flex', alignItems:'center', gap:14, padding:'13px 18px',
+                    borderTop: i > 0 ? `1px solid ${C.borderL}` : 'none',
+                  }}>
+                    <div style={{ width:36, height:36, borderRadius:3, background: s.color + '22',
+                      display:'flex', alignItems:'center', justifyContent:'center',
+                      fontFamily:'Bebas Neue', fontSize:'1.05rem', color: s.color, letterSpacing:'0.04em',
+                      border:`2px solid ${s.color}55` }}>
+                      {s.score}
+                    </div>
+                    <div style={{ flex:1 }}>
+                      <div style={{ fontWeight:600, color: C.ink, fontSize:'0.85rem' }}>{s.scenario}</div>
+                      <div style={{ fontSize:'0.72rem', color: C.inkLt, marginTop:2 }}>{s.domain} · {s.date} · {s.duration}</div>
+                    </div>
+                    <button onClick={() => { setView('sessions'); setSelected(s.id); }} style={{
+                      background:'none', border:'none', cursor:'pointer', color: s.color,
+                      fontFamily:'Open Sans', fontWeight:700, fontSize:'0.72rem',
+                      letterSpacing:'0.06em', textTransform:'uppercase',
+                    }}>View →</button>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </div>
+        </div>
+      )}
+
+      {/* ── SESSIONS VIEW ── */}
+      {view === 'sessions' && session && (
+        <div style={{ display:'flex', flexDirection:'column', gap:20 }}>
+          {/* Back button */}
+          <div>
+            <button onClick={() => { setView('overall'); setSelected(null); }} style={{
+              background:'none', border:'none', cursor:'pointer', display:'flex', alignItems:'center', gap:6,
+              color: C.kimb, fontFamily:'Open Sans', fontWeight:700, fontSize:'0.78rem',
+              letterSpacing:'0.07em', textTransform:'uppercase', padding:0,
+            }}>
+              <span style={{ fontSize:'1rem', lineHeight:1 }}>←</span> Back to Overview
+            </button>
+          </div>
+
+          {/* Score + header */}
+          <Card style={{ padding:'24px' }}>
+            <div style={{ display:'flex', alignItems:'center', gap:24, marginBottom:24 }}>
+              <ScoreRing score={session.score} />
+              <div>
+                <PillLabel color={C.kimb}>{session.domain}</PillLabel>
+                <h3 style={{ fontFamily:'Bebas Neue', fontSize:'1.8rem', color: C.kimbD, letterSpacing:'0.04em' }}>{session.scenario}</h3>
+                <div style={{ color: C.inkMute, fontSize:'0.82rem', marginTop:4 }}>{session.date} · {session.duration} duration</div>
+              </div>
+              <div style={{ marginLeft:'auto' }}>
+                <GhostBtn style={{ padding:'8px 16px', fontSize:'0.72rem' }}>Download PDF</GhostBtn>
+              </div>
+            </div>
+            <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
+              {session.metrics.map(m => (
+                <div key={m.label}>
+                  <div style={{ display:'flex', justifyContent:'space-between', marginBottom:6 }}>
+                    <span style={{ fontSize:'0.82rem', color: C.inkMid }}>{m.label}</span>
+                    <span style={{ fontSize:'0.82rem', fontWeight:700, color: m.color }}>{m.value}%</span>
+                  </div>
+                  <ProgressBar value={m.value} color={m.color} />
+                </div>
+              ))}
+            </div>
+          </Card>
+
+          {/* Written notes */}
+          <Card style={{ padding:'22px 20px' }}>
+            <h4 style={{ fontFamily:'Bebas Neue', fontSize:'1.1rem', color: C.kimbD, letterSpacing:'0.05em', marginBottom:16 }}>Written Feedback</h4>
+            <div style={{ display:'flex', flexDirection:'column', gap:12 }}>
+              {session.notes.map(n => (
+                <div key={n.type} style={{ borderLeft:`3px solid ${n.color}`, background: n.bg, padding:'11px 13px', borderRadius:'0 4px 4px 0' }}>
+                  <div style={{ fontSize:'0.65rem', fontWeight:700, color: n.color, textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:5 }}>{n.type}</div>
+                  <p style={{ fontSize:'0.82rem', color: C.inkMid, lineHeight:1.6 }}>{n.text}</p>
+                </div>
+              ))}
+            </div>
+          </Card>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════
+   PAGE: ACCOUNT
+══════════════════════════════════════════════════════════ */
+function AccountPage() {
+  const [form, setForm] = useState({
+    firstName:'Jordan', lastName:'Mills',
+    email:'j.mills@metro-police.gov', org:'Metropolitan Police Service',
+    role:'Detective Constable', password:'',
+  });
+  const [saved, setSaved] = useState(false);
+  function save() { setSaved(true); setTimeout(() => setSaved(false), 2500); }
+
+  return (
+    <div style={{ padding:'28px 32px' }}>
+      <SectionHeading label="My Account" title="Profile & Settings" />
+      <div style={{ display:'grid', gridTemplateColumns:'300px 1fr', gap:24 }}>
+        {/* Profile card */}
+        <Card style={{ padding:'28px 20px', display:'flex', flexDirection:'column', alignItems:'center', textAlign:'center', gap:16 }}>
+          <div style={{ width:72, height:72, borderRadius:4,
+            background:`linear-gradient(135deg, ${C.kimb}, ${C.kimbD})`,
+            display:'flex', alignItems:'center', justifyContent:'center',
+            color:'#fff', fontFamily:'Bebas Neue', fontSize:'1.8rem', letterSpacing:'0.1em' }}>
+            JM
+          </div>
+          <div>
+            <h3 style={{ fontFamily:'Bebas Neue', fontSize:'1.35rem', color: C.kimbD, letterSpacing:'0.04em' }}>Jordan Mills</h3>
+            <div style={{ fontSize:'0.8rem', color: C.inkMute, marginTop:2 }}>Detective Constable</div>
+            <div style={{ fontSize:'0.72rem', color: C.inkLt, marginTop:2 }}>Metropolitan Police Service</div>
+          </div>
+          <Divider style={{ width:'100%' }} />
+          {/* Credits */}
+          <div style={{ width:'100%' }}>
+            <div style={{ display:'flex', justifyContent:'space-between', marginBottom:6 }}>
+              <span style={{ fontSize:'0.78rem', color: C.inkMute }}>Session credits</span>
+              <span style={{ fontWeight:700, color: C.kimb, fontSize:'0.78rem' }}>8 / 10</span>
+            </div>
+            <ProgressBar value={72} color={C.kimb} />
+            <div style={{ fontSize:'0.7rem', color: C.inkLt, marginTop:5, textAlign:'left' }}>2 credits remaining</div>
+          </div>
+
+        </Card>
+
+        {/* Edit form */}
+        <Card style={{ padding:'28px 24px' }}>
+          <h4 style={{ fontFamily:'Bebas Neue', fontSize:'1.35rem', color: C.kimbD, letterSpacing:'0.04em', marginBottom:22 }}>Edit Profile</h4>
+          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:18 }}>
+            {[
+              ['firstName','First Name','text'],
+              ['lastName','Last Name','text'],
+              ['email','Email Address','email'],
+              ['org','Organisation','text'],
+              ['role','Role / Rank','text'],
+              ['password','New Password','password'],
+            ].map(([key,label,type]) => (
+              <div key={key} style={{ gridColumn: key==='email'||key==='org' ? 'span 2' : 'auto' }}>
+                <label style={{ display:'block', fontSize:'0.72rem', fontWeight:700, color: C.inkMute, marginBottom:6, textTransform:'uppercase', letterSpacing:'0.07em' }}>{label}</label>
+                <input type={type} value={form[key]}
+                  onChange={e => setForm(f => ({...f,[key]:e.target.value}))}
+                  placeholder={type==='password' ? '••••••••' : ''}
+                  style={{ width:'100%', padding:'10px 14px', border:`1.5px solid ${C.border}`,
+                    borderRadius:3, fontFamily:'Open Sans', fontSize:'0.88rem',
+                    color: C.ink, outline:'none', transition:'border-color 0.15s', background:'#fff',
+                  }}
+                  onFocus={e => e.target.style.borderColor = C.kimb}
+                  onBlur={e => e.target.style.borderColor = C.border}
+                />
+              </div>
+            ))}
+          </div>
+          <div style={{ marginTop:24, display:'flex', gap:12, alignItems:'center' }}>
+            <PrimaryBtn onClick={save} style={{ padding:'11px 28px' }}>Save Changes</PrimaryBtn>
+            {saved && <span style={{ color: C.success, fontSize:'0.85rem', fontWeight:600 }}>✓ Changes saved</span>}
+          </div>
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════
+   PAGE: INSTRUCTOR
+══════════════════════════════════════════════════════════ */
+function InstructorPage() {
+  const metrics = [
+    { label:'Active Trainees', value:24, color: C.corfu },
+    { label:'Average Score', value:'76.4', color: C.success },
+    { label:'Sessions This Week', value:38, color: C.kimb },
+    { label:'Need Attention', value:4, color: C.danger },
+  ];
+
+  const trainees = [
+    { name:'Jordan Mills', rank:'Det. Constable', last:'3 May 2026', score:78, sessions:8, progress:80, flag:'green' },
+    { name:'Marcus Chen', rank:'Constable', last:'2 May 2026', score:65, sessions:6, progress:60, flag:'amber' },
+    { name:'Priya Nair', rank:'Sergeant', last:'1 May 2026', score:91, sessions:10, progress:100, flag:'green' },
+    { name:'Tom Bradley', rank:'Constable', last:'28 Apr 2026', score:42, sessions:3, progress:30, flag:'red' },
+    { name:'Sarah Okafor', rank:'Det. Constable', last:'30 Apr 2026', score:83, sessions:9, progress:90, flag:'green' },
+    { name:'Lee Park', rank:'Constable', last:'26 Apr 2026', score:55, sessions:5, progress:50, flag:'amber' },
+    { name:'Diana Reyes', rank:'Inspector', last:'3 May 2026', score:88, sessions:10, progress:100, flag:'green' },
+    { name:'James Whitfield', rank:'Constable', last:'22 Apr 2026', score:38, sessions:2, progress:20, flag:'red' },
+  ];
+
+  const flagColors = { green: C.success, amber: C.warn, red: C.danger };
+  const flagBg = { green: C.felt + '20', amber: C.daring + '20', red: '#b83030' + '15' };
+  const [hov, setHov] = useState(null);
+
+  return (
+    <div style={{ padding:'28px 32px' }}>
+      <SectionHeading label="Instructor Dashboard" title="Trainee Overview" subtitle="Metropolitan Police Service — EchoMind Training Programme" />
+
+      {/* Metric tiles */}
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(4,1fr)', gap:16, marginBottom:28 }}>
+        {metrics.map(m => (
+          <Card key={m.label} topBorderColor={m.color} style={{ padding:'20px 18px' }}>
+            <div style={{ fontSize:'0.65rem', color: C.inkMute, textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:8 }}>{m.label}</div>
+            <div style={{ fontFamily:'Bebas Neue', fontSize:'2.6rem', color: m.color, lineHeight:1 }}>{m.value}</div>
+          </Card>
+        ))}
+      </div>
+
+      {/* Trainee table */}
+      <Card>
+        <div style={{ padding:'16px 20px', borderBottom:`1.5px solid ${C.borderL}`, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
+          <span style={{ fontFamily:'Bebas Neue', fontSize:'1.25rem', color: C.kimbD, letterSpacing:'0.05em' }}>Trainee Progress</span>
+          <GhostBtn style={{ padding:'6px 14px', fontSize:'0.72rem' }}>Export CSV</GhostBtn>
+        </div>
+        <div style={{ overflowX:'auto' }}>
+          <table style={{ width:'100%', borderCollapse:'collapse' }}>
+            <thead>
+              <tr style={{ background: C.surface }}>
+                {['Name','Rank','Last Session','Score','Sessions (max 10)','Progress','Actions'].map(h => (
+                  <th key={h} style={{ padding:'10px 16px', textAlign:'left', fontSize:'0.62rem', fontWeight:700, color: C.inkLt, letterSpacing:'0.1em', textTransform:'uppercase', whiteSpace:'nowrap' }}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {trainees.map((t, i) => (
+                <tr key={t.name}
+                  onMouseEnter={() => setHov(i)} onMouseLeave={() => setHov(null)}
+                  style={{ background: hov===i ? C.kimbP : C.white, transition:'background 0.15s', borderTop:`1px solid ${C.borderL}` }}>
+                  <td style={{ padding:'13px 16px' }}>
+                    <div style={{ display:'flex', alignItems:'center', gap:10 }}>
+                      <div style={{ width:32, height:32, borderRadius:3,
+                        background:`linear-gradient(135deg, ${C.kimb}50, ${C.corfu}40)`,
+                        display:'flex', alignItems:'center', justifyContent:'center',
+                        fontSize:'0.68rem', fontWeight:700, color: C.kimbD }}>
+                        {t.name.split(' ').map(n=>n[0]).join('')}
+                      </div>
+                      <span style={{ fontWeight:600, color: C.ink, fontSize:'0.85rem' }}>{t.name}</span>
+                    </div>
+                  </td>
+                  <td style={{ padding:'13px 16px', fontSize:'0.82rem', color: C.inkMute }}>{t.rank}</td>
+                  <td style={{ padding:'13px 16px', fontSize:'0.82rem', color: C.inkMute, whiteSpace:'nowrap' }}>{t.last}</td>
+                  <td style={{ padding:'13px 16px' }}>
+                    <span style={{ background: flagBg[t.flag], color: flagColors[t.flag],
+                      borderRadius:2, padding:'3px 10px', fontSize:'0.78rem', fontWeight:700,
+                      letterSpacing:'0.04em' }}>
+                      {t.score}
+                    </span>
+                  </td>
+                  <td style={{ padding:'13px 16px', fontSize:'0.82rem', color: C.inkMute, textAlign:'center' }}>{t.sessions} / 10</td>
+                  <td style={{ padding:'13px 16px', minWidth:110 }}>
+                    <ProgressBar value={t.progress} color={flagColors[t.flag]} />
+                  </td>
+                  <td style={{ padding:'13px 16px' }}>
+                    <div style={{ display:'flex', gap:10 }}>
+                      <button style={{ background:'none', border:'none', cursor:'pointer', color: C.kimb, fontWeight:700, fontSize:'0.78rem', padding:0, textTransform:'uppercase', letterSpacing:'0.06em' }}>Report</button>
+                      <span style={{ color: C.borderL }}>|</span>
+                      <button style={{ background:'none', border:'none', cursor:'pointer', color: C.inkMute, fontWeight:700, fontSize:'0.78rem', padding:0, textTransform:'uppercase', letterSpacing:'0.06em' }}>Recording</button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Card>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════
+   FOOTER
+══════════════════════════════════════════════════════════ */
+function Footer() {
+  return (
+    <footer style={{ background: C.kimbD, padding:'22px 40px', display:'flex', alignItems:'center', justifyContent:'space-between', marginTop:'auto' }}>
+      <span style={{ color:'rgba(255,255,255,0.35)', fontSize:'0.75rem' }}>© 2026 EchoMind. All rights reserved.</span>
+      <div style={{ display:'flex', alignItems:'center', gap:10 }}>
+        <span style={{ color:'rgba(255,255,255,0.35)', fontSize:'0.72rem', textTransform:'uppercase', letterSpacing:'0.08em' }}>Powered by</span>
+        <OsacoLogo height={22} />
+      </div>
+    </footer>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════
+   APP ROOT
+══════════════════════════════════════════════════════════ */
+function App() {
+  const [page, setPage] = useState('Scenarios');
+  return (
+    <div style={{ minHeight:'100vh', display:'flex', flexDirection:'column' }}>
+      <NavBar page={page} setPage={setPage} />
+      <div style={{ flex:1 }}>
+        {page==='Scenarios' && <ScenariosPage setPage={setPage} />}
+        {page==='Interview' && <InterviewPage />}
+        {page==='Feedback' && <FeedbackPage />}
+        {page==='Account' && <AccountPage />}
+        {page==='Instructor' && <InstructorPage />}
+      </div>
+      <Footer />
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
