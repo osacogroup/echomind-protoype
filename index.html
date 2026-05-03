@@ -337,8 +337,23 @@ function ScenariosPage({ setPage }) {
               />
             )}
 
-            {/* Law Enforcement and Military - Coming Soon placeholder */}
-            {(selected === 'law' || selected === 'mil') && (
+            {/* Military video - YouTube */}
+            {selected === 'mil' && (
+              <iframe
+                width="100%"
+                height="450"
+                src="https://www.youtube.com/embed/Djc5E9xsUhY?si=c7vef71LmxRSz0Cq&rel=0&modestbranding=1"
+                title="Military Intelligence Debrief Demo"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerPolicy="strict-origin-when-cross-origin"
+                allowFullScreen
+                style={{ display:'block' }}
+              />
+            )}
+
+            {/* Law Enforcement - Coming Soon placeholder */}
+            {selected === 'law' && (
               <div style={{
                 height: 450, background:'#111827',
                 display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:16,
