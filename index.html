@@ -224,7 +224,6 @@ function NavBar({ page, setPage }) {
 ══════════════════════════════════════════════════════════ */
 function ScenariosPage({ setPage }) {
   const [selected, setSelected] = useState(null);
-  const [videoPlaying, setVideoPlaying] = useState(false);
 
   const scenarios = [
     {
@@ -309,35 +308,64 @@ function ScenariosPage({ setPage }) {
 
         <Divider style={{ marginBottom:36 }} />
 
-        {/* Video preview */}
+        {/* Video preview section */}
         <div style={{ background: C.inkMid, borderRadius:6, overflow:'hidden', marginBottom:32 }}>
           <div style={{ padding:'18px 24px 0', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
             <div>
               <div style={{ color:'rgba(255,255,255,0.45)', fontSize:'0.65rem', letterSpacing:'0.1em', textTransform:'uppercase', marginBottom:4 }}>Preview</div>
-              <div style={{ color:'#fff', fontFamily:'Bebas Neue', fontSize:'1.35rem', letterSpacing:'0.05em' }}>Sample Interview Session</div>
+              <div style={{ color:'#fff', fontFamily:'Bebas Neue', fontSize:'1.35rem', letterSpacing:'0.05em' }}>
+                {selected === 'sales' ? 'Sales: Discovery & Closing Demo' : 'Sample Interview Session'}
+              </div>
             </div>
-            <span style={{ background: C.kimbP, color: C.kimb, fontSize:'0.68rem', fontWeight:700, padding:'3px 12px', borderRadius:2, letterSpacing:'0.06em' }}>3:42</span>
           </div>
-          <div style={{ margin:'16px 24px 24px', borderRadius:4, overflow:'hidden', position:'relative',
-            aspectRatio:'16/7', background:'#111827', display:'flex', alignItems:'center', justifyContent:'center' }}>
-            <div style={{ display:'flex', alignItems:'center', gap:3, opacity:0.25 }}>
-              {Array.from({length:70}, (_,i) => (
-                <div key={i} style={{ width:3, borderRadius:2,
-                  height: Math.abs(Math.sin(i*0.38)*28 + Math.cos(i*0.71)*14) + 4,
-                  background:`linear-gradient(to top, ${C.corfu}, ${C.kimb})` }} />
-              ))}
-            </div>
-            <button onClick={() => setVideoPlaying(!videoPlaying)} style={{
-              position:'absolute', width:62, height:62, borderRadius:'50%',
-              background:'transparent', border:`2.5px solid ${C.energized}`,
-              display:'flex', alignItems:'center', justifyContent:'center',
-              cursor:'pointer', transition:'all 0.18s',
-            }}>
-              {videoPlaying
-                ? <span style={{ color: C.energized, fontSize:20 }}>⏸</span>
-                : <span style={{ color: C.energized, fontSize:22, marginLeft:4 }}>▶</span>
-              }
-            </button>
+
+          {/* Video area */}
+          <div style={{ margin:'16px 24px 24px', borderRadius:4, overflow:'hidden', position:'relative' }}>
+
+            {/* Sales video - YouTube embed */}
+            {selected === 'sales' && (
+              <iframe
+                width="100%"
+                height="450"
+                src="https://www.youtube.com/embed/hyk4WAfYs5A?si=HXmREZY4sKVKYnHb"
+                title="YouTube video player"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerPolicy="strict-origin-when-cross-origin"
+                allowFullScreen
+                style={{ display:'block' }}
+              />
+            )}
+
+            {/* Law Enforcement and Military - Coming Soon placeholder */}
+            {(selected === 'law' || selected === 'mil') && (
+              <div style={{
+                height: 450, background:'#111827',
+                display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:16,
+              }}>
+                <div style={{ fontSize:'2.5rem' }}>🎬</div>
+                <div style={{ fontFamily:'Bebas Neue', fontSize:'1.8rem', color:'#fff', letterSpacing:'0.08em' }}>Coming Soon</div>
+                <div style={{ fontSize:'0.82rem', color:'rgba(255,255,255,0.45)' }}>Demo video for this scenario is in production</div>
+              </div>
+            )}
+
+            {/* No selection - default placeholder */}
+            {!selected && (
+              <div style={{
+                height: 450, background:'#111827',
+                display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:12,
+              }}>
+                <div style={{ display:'flex', alignItems:'center', gap:3, opacity:0.25 }}>
+                  {Array.from({length:70}, (_,i) => (
+                    <div key={i} style={{ width:3, borderRadius:2,
+                      height: Math.abs(Math.sin(i*0.38)*28 + Math.cos(i*0.71)*14) + 4,
+                      background:`linear-gradient(to top, ${C.corfu}, ${C.kimb})` }} />
+                  ))}
+                </div>
+                <div style={{ fontSize:'0.82rem', color:'rgba(255,255,255,0.35)', marginTop:8 }}>Select a scenario above to preview</div>
+              </div>
+            )}
+
           </div>
         </div>
 
