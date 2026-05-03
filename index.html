@@ -1043,12 +1043,7 @@ function ContactPage() {
 
           {/* About OSACO */}
           <Card style={{ padding:'24px 20px' }}>
-            <div style={{ marginBottom:16 }}>
-              <OsacoLogo height={28} />
-            </div>
-            <div style={{ marginBottom:4 }}>
-              <div style={{ display:'inline-block', background: C.kimbP, color: C.kimb, fontSize:'0.65rem', fontWeight:700, padding:'3px 10px', borderRadius:2, letterSpacing:'0.08em', textTransform:'uppercase', marginBottom:10 }}>About OSACO</div>
-            </div>
+            <h4 style={{ fontFamily:'Bebas Neue', fontSize:'1.1rem', color: C.kimbD, letterSpacing:'0.05em', marginBottom:12 }}>About OSACO</h4>
             <p style={{ fontSize:'0.82rem', color: C.inkMid, lineHeight:1.7, marginBottom:12 }}>
               OSACO Group provides expert investigators and specialists to help organisations predict, prevent and respond to human risk factors. We are agile, responsive and highly capable.
             </p>
@@ -1056,22 +1051,28 @@ function ContactPage() {
               We believe global systems work better when they display higher levels of ethics and transparency — and EchoMind is our commitment to building the training tools that make that possible.
             </p>
             <a href="https://www.osacogroup.com" target="_blank" rel="noreferrer"
-              style={{ display:'inline-flex', alignItems:'center', gap:6, color: C.kimb, fontWeight:700, fontSize:'0.78rem', textDecoration:'none', letterSpacing:'0.04em' }}>
-              🌐 osacogroup.com →
+              style={{ display:'inline-flex', alignItems:'center', gap:8, color: C.kimb, fontWeight:700, fontSize:'0.78rem', textDecoration:'none', letterSpacing:'0.04em',
+                padding:'8px 14px', border:`1.5px solid ${C.kimb}`, borderRadius:3 }}>
+              <span style={{ fontSize:'0.9rem' }}>🌐</span> Visit osacogroup.com
             </a>
           </Card>
 
           {/* What we do */}
           <Card style={{ padding:'24px 20px' }}>
             <h4 style={{ fontFamily:'Bebas Neue', fontSize:'1.1rem', color: C.kimbD, letterSpacing:'0.05em', marginBottom:14 }}>What OSACO Does</h4>
-            {[
-              ['🔍', 'Investigations', 'Workplace misconduct, fraud and corruption investigations across all sectors.'],
-              ['🎓', 'Training', 'Interview, intelligence analysis and investigations training for professionals.'],
-              ['🛡', 'Safeguarding', 'Audit and review services to protect organisations and their people.'],
-              ['🤖', 'EchoMind', 'AI-powered avatar training for law enforcement, military and sales professionals.'],
-            ].map(([icon, title, desc]) => (
+           {[
+              ['I', 'Investigations', 'Workplace misconduct, fraud and corruption investigations across all sectors.'],
+              ['T', 'Training', 'Interview, intelligence analysis and investigations training for professionals.'],
+              ['S', 'Safeguarding', 'Audit and review services to protect organisations and their people.'],
+              ['E', 'EchoMind', 'AI-powered avatar training for law enforcement, military and sales professionals.'],
+            ].map(([letter, title, desc]) => (
               <div key={title} style={{ display:'flex', gap:12, marginBottom:14 }}>
-                <span style={{ fontSize:'1.1rem', marginTop:1 }}>{icon}</span>
+                <div style={{
+                  width:28, height:28, borderRadius:4, background: C.kimbP,
+                  display:'flex', alignItems:'center', justifyContent:'center',
+                  flexShrink:0, color: C.kimbD, fontFamily:'Bebas Neue',
+                  fontSize:'0.95rem', letterSpacing:'0.05em',
+                }}>{letter}</div>
                 <div>
                   <div style={{ fontWeight:700, color: C.kimbD, fontSize:'0.82rem', marginBottom:2 }}>{title}</div>
                   <div style={{ fontSize:'0.78rem', color: C.inkMute, lineHeight:1.5 }}>{desc}</div>
@@ -1084,12 +1085,24 @@ function ContactPage() {
           <Card style={{ padding:'20px' }}>
             <h4 style={{ fontFamily:'Bebas Neue', fontSize:'1.1rem', color: C.kimbD, letterSpacing:'0.05em', marginBottom:12 }}>Global Presence</h4>
             {[
-              ['🇳🇿', 'New Zealand', 'osacogroup.com/new-zealand-workplace-investigations'],
-              ['🇺🇸', 'North America', 'osacogroup.com/usa'],
-              ['🌍', 'Africa', 'osacogroup.com/africa'],
-            ].map(([flag, region, url]) => (
-              <div key={region} style={{ display:'flex', alignItems:'center', gap:10, marginBottom:10 }}>
-                <span style={{ fontSize:'1.1rem' }}>{flag}</span>
+              ['I', 'Investigations', 'Workplace misconduct, fraud and corruption investigations across all sectors.'],
+              ['T', 'Training', 'Interview, intelligence analysis and investigations training for professionals.'],
+              ['S', 'Safeguarding', 'Audit and review services to protect organisations and their people.'],
+              ['E', 'EchoMind', 'AI-powered avatar training for law enforcement, military and sales professionals.'],
+            ].map(([letter, title, desc]) => (
+              <div key={title} style={{ display:'flex', gap:12, marginBottom:14 }}>
+                <div style={{
+                  width:28, height:28, borderRadius:4, background: C.kimbP,
+                  display:'flex', alignItems:'center', justifyContent:'center',
+                  flexShrink:0, color: C.kimbD, fontFamily:'Bebas Neue',
+                  fontSize:'0.95rem', letterSpacing:'0.05em',
+                }}>{letter}</div>
+                <div>
+                  <div style={{ fontWeight:700, color: C.kimbD, fontSize:'0.82rem', marginBottom:2 }}>{title}</div>
+                  <div style={{ fontSize:'0.78rem', color: C.inkMute, lineHeight:1.5 }}>{desc}</div>
+                </div>
+              </div>
+            ))}
                 <div>
                   <div style={{ fontWeight:700, color: C.kimbD, fontSize:'0.8rem' }}>{region}</div>
                   <a href={`https://www.${url}`} target="_blank" rel="noreferrer"
