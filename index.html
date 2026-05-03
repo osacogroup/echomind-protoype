@@ -373,42 +373,46 @@ function InterviewPage() {
   return (
     <div style={{ padding:'28px 32px' }}>
       <div>
-        {/* Avatar viewport */}
-        <div style={{ background: C.inkMid, borderRadius:6, overflow:'hidden', position:'relative', aspectRatio:'16/10', marginBottom:16, display:'flex', alignItems:'center', justifyContent:'center' }}>
-          {/* Concentric rings — EchoMind motif */}
-          <svg viewBox="0 0 160 160" width={160} height={160} fill="none" style={{ opacity:0.18 }}>
-            {[70,56,42,28,14].map((r,i) => (
-              <circle key={i} cx={80} cy={80} r={r} stroke="white" strokeWidth={2} />
-            ))}
-          </svg>
-          {/* Silhouette */}
-          <svg viewBox="0 0 120 130" width={100} height={110} fill="none" style={{ position:'absolute' }}>
-            <circle cx="60" cy="38" r="26" fill={`rgba(255,255,255,0.18)`} />
-            <ellipse cx="60" cy="105" rx="38" ry="28" fill={`rgba(255,255,255,0.12)`} />
-          </svg>
+        {/* Avatar viewport with YouTube video */}
+        <div style={{ background: C.inkMid, borderRadius:6, overflow:'hidden', position:'relative', marginBottom:16 }}>
+          
+          {/* YouTube iframe */}
+          <iframe
+            width="100%"
+            height="500"
+            src="https://www.youtube.com/embed/ohDRIxZqLs8?si=Ct2rXCZ1tdaoH5Cz"
+            title="YouTube video player"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerPolicy="strict-origin-when-cross-origin"
+            allowFullScreen
+            style={{ display:'block' }}
+          />
+
           {/* Name tag */}
           <div style={{ position:'absolute', bottom:16, left:16,
             fontFamily:'Open Sans', fontWeight:700, fontSize:'0.75rem', color: C.energized,
             background:'rgba(0,0,0,0.55)', padding:'5px 12px', borderRadius:3,
             letterSpacing:'0.08em', textTransform:'uppercase' }}>
-            Alex Reyes · Subject 04
+            Ethan · Subject 04
           </div>
-          {/* LIVE */}
+
+          {/* LIVE badge */}
           <div style={{ position:'absolute', top:14, right:14, display:'flex', alignItems:'center', gap:6,
             background:'rgba(184,48,48,0.9)', borderRadius:3, padding:'4px 10px' }}>
             <div style={{ width:7, height:7, borderRadius:'50%', background:'#ff6666', animation:'blink 1.2s infinite' }} />
             <span style={{ color:'#fff', fontSize:'0.65rem', fontWeight:700, letterSpacing:'0.12em' }}>LIVE</span>
           </div>
+
           {/* Timer */}
           <div style={{ position:'absolute', bottom:16, right:16,
             fontFamily:'Open Sans', fontWeight:700, fontSize:'0.82rem', color:'rgba(255,255,255,0.65)',
             background:'rgba(0,0,0,0.45)', padding:'4px 10px', borderRadius:3, letterSpacing:'0.06em' }}>
             {fmt(seconds)}
           </div>
+
         </div>
-
       </div>
-
       <style>{`@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.25} }`}</style>
     </div>
   );
