@@ -383,18 +383,6 @@ function ScenariosPage({ setPage }) {
 
           </div>
         </div>
-
-        {/* Actions */}
-        <div style={{ display:'flex', gap:12, alignItems:'center' }}>
-          <PrimaryBtn disabled={!selected} onClick={() => setPage('Interview')}
-            style={{ padding:'13px 36px', fontSize:'0.85rem' }}>
-            Begin Session →
-          </PrimaryBtn>
-          <GhostBtn onClick={() => setPage('Feedback')}>View Sample Report</GhostBtn>
-          {!selected && <span style={{ color: C.inkLt, fontSize:'0.78rem' }}>Select a scenario above to begin</span>}
-        </div>
-      </div>
-    </div>
   );
 }
 
