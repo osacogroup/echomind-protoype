@@ -173,7 +173,7 @@ function Divider({ style = {} }) {
    NAV BAR
 ══════════════════════════════════════════════════════════ */
 function NavBar({ page, setPage }) {
-  const pages = ['Scenarios','Interview','Feedback','Account','Instructor'];
+  const pages = ['Scenarios','Interview','Feedback','Account','Instructor','Contact'];
   return (
     <nav style={{
       position:'sticky', top:0, zIndex:100,
@@ -900,7 +900,213 @@ function Footer() {
     </footer>
   );
 }
+/* ══════════════════════════════════════════════════════════
+   PAGE: CONTACT
+══════════════════════════════════════════════════════════ */
+function ContactPage() {
+  const [form, setForm] = useState({
+    firstName:'', lastName:'', organisation:'', position:'',
+    email:'', phone:'', country:'', interest:'',
+  });
+  const [submitted, setSubmitted] = useState(false);
 
+  function handleSubmit() {
+    if (!form.firstName || !form.email || !form.interest) return;
+    setSubmitted(true);
+  }
+
+  const interests = [
+    'Signing up for the EchoMind Pilot Programme',
+    'Investing in EchoMind',
+    'Other / General Enquiry',
+  ];
+
+  return (
+    <div style={{ padding:'40px 40px', maxWidth:1100, margin:'0 auto' }}>
+
+      {/* Page heading */}
+      <div style={{ marginBottom:36 }}>
+        <PillLabel color={C.kimb}>Get In Touch</PillLabel>
+        <h1 style={{ fontFamily:'Bebas Neue', fontSize:'2.8rem', color: C.kimbD, lineHeight:1.1, letterSpacing:'0.05em', marginBottom:12 }}>
+          Connect With the EchoMind Team
+        </h1>
+        <p style={{ color: C.inkMute, fontSize:'0.92rem', maxWidth:600, lineHeight:1.7 }}>
+          We place a great emphasis on personal relationships and trust. All conversations with us are handled with discretion and without any obligation. Fill in the form below and we will be in touch.
+        </p>
+      </div>
+
+      <div style={{ display:'grid', gridTemplateColumns:'1fr 380px', gap:32 }}>
+
+        {/* ── Contact form ── */}
+        <Card style={{ padding:'32px 28px' }}>
+          {submitted ? (
+            <div style={{ display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'60px 20px', gap:16 }}>
+              <div style={{ fontSize:'3rem' }}>✅</div>
+              <h3 style={{ fontFamily:'Bebas Neue', fontSize:'2rem', color: C.kimbD, letterSpacing:'0.05em' }}>Thank You!</h3>
+              <p style={{ color: C.inkMute, textAlign:'center', fontSize:'0.9rem', lineHeight:1.7, maxWidth:400 }}>
+                Your enquiry has been received. A member of the OSACO EchoMind team will be in touch with you shortly.
+              </p>
+              <button onClick={() => { setSubmitted(false); setForm({ firstName:'', lastName:'', organisation:'', position:'', email:'', phone:'', country:'', interest:'' }); }}
+                style={{ marginTop:12, background:'none', border:`1.5px solid ${C.kimb}`, borderRadius:3, padding:'8px 20px', color: C.kimb, fontFamily:'Open Sans', fontWeight:700, fontSize:'0.78rem', letterSpacing:'0.06em', textTransform:'uppercase', cursor:'pointer' }}>
+                Submit Another Enquiry
+              </button>
+            </div>
+          ) : (
+            <>
+              <h4 style={{ fontFamily:'Bebas Neue', fontSize:'1.3rem', color: C.kimbD, letterSpacing:'0.05em', marginBottom:22 }}>Your Details</h4>
+
+              {/* Name row */}
+              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16, marginBottom:16 }}>
+                {[['firstName','First Name'],['lastName','Last Name']].map(([key, label]) => (
+                  <div key={key}>
+                    <label style={{ display:'block', fontSize:'0.72rem', fontWeight:700, color: C.inkMute, marginBottom:6, textTransform:'uppercase', letterSpacing:'0.07em' }}>{label} <span style={{ color: C.danger }}>*</span></label>
+                    <input type="text" value={form[key]}
+                      onChange={e => setForm(f => ({...f,[key]:e.target.value}))}
+                      style={{ width:'100%', padding:'10px 14px', border:`1.5px solid ${C.border}`, borderRadius:3, fontFamily:'Open Sans', fontSize:'0.88rem', color: C.ink, outline:'none', background:'#fff' }}
+                      onFocus={e => e.target.style.borderColor = C.kimb}
+                      onBlur={e => e.target.style.borderColor = C.border}
+                    />
+                  </div>
+                ))}
+              </div>
+
+              {/* Organisation + Position */}
+              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16, marginBottom:16 }}>
+                {[['organisation','Organisation'],['position','Position / Role']].map(([key, label]) => (
+                  <div key={key}>
+                    <label style={{ display:'block', fontSize:'0.72rem', fontWeight:700, color: C.inkMute, marginBottom:6, textTransform:'uppercase', letterSpacing:'0.07em' }}>{label}</label>
+                    <input type="text" value={form[key]}
+                      onChange={e => setForm(f => ({...f,[key]:e.target.value}))}
+                      style={{ width:'100%', padding:'10px 14px', border:`1.5px solid ${C.border}`, borderRadius:3, fontFamily:'Open Sans', fontSize:'0.88rem', color: C.ink, outline:'none', background:'#fff' }}
+                      onFocus={e => e.target.style.borderColor = C.kimb}
+                      onBlur={e => e.target.style.borderColor = C.border}
+                    />
+                  </div>
+                ))}
+              </div>
+
+              {/* Email + Phone */}
+              <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16, marginBottom:16 }}>
+                {[['email','Email Address','email'],['phone','Contact Phone','tel']].map(([key, label, type]) => (
+                  <div key={key}>
+                    <label style={{ display:'block', fontSize:'0.72rem', fontWeight:700, color: C.inkMute, marginBottom:6, textTransform:'uppercase', letterSpacing:'0.07em' }}>{label} {key==='email' && <span style={{ color: C.danger }}>*</span>}</label>
+                    <input type={type} value={form[key]}
+                      onChange={e => setForm(f => ({...f,[key]:e.target.value}))}
+                      style={{ width:'100%', padding:'10px 14px', border:`1.5px solid ${C.border}`, borderRadius:3, fontFamily:'Open Sans', fontSize:'0.88rem', color: C.ink, outline:'none', background:'#fff' }}
+                      onFocus={e => e.target.style.borderColor = C.kimb}
+                      onBlur={e => e.target.style.borderColor = C.border}
+                    />
+                  </div>
+                ))}
+              </div>
+
+              {/* Country */}
+              <div style={{ marginBottom:16 }}>
+                <label style={{ display:'block', fontSize:'0.72rem', fontWeight:700, color: C.inkMute, marginBottom:6, textTransform:'uppercase', letterSpacing:'0.07em' }}>Country</label>
+                <input type="text" value={form.country}
+                  onChange={e => setForm(f => ({...f, country:e.target.value}))}
+                  style={{ width:'100%', padding:'10px 14px', border:`1.5px solid ${C.border}`, borderRadius:3, fontFamily:'Open Sans', fontSize:'0.88rem', color: C.ink, outline:'none', background:'#fff' }}
+                  onFocus={e => e.target.style.borderColor = C.kimb}
+                  onBlur={e => e.target.style.borderColor = C.border}
+                />
+              </div>
+
+              {/* Interest */}
+              <div style={{ marginBottom:24 }}>
+                <label style={{ display:'block', fontSize:'0.72rem', fontWeight:700, color: C.inkMute, marginBottom:10, textTransform:'uppercase', letterSpacing:'0.07em' }}>I am interested in <span style={{ color: C.danger }}>*</span></label>
+                <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
+                  {interests.map(opt => (
+                    <label key={opt} style={{ display:'flex', alignItems:'center', gap:10, cursor:'pointer' }}>
+                      <div onClick={() => setForm(f => ({...f, interest: opt}))}
+                        style={{ width:18, height:18, borderRadius:'50%', border:`2px solid ${form.interest === opt ? C.kimb : C.border}`, background: form.interest === opt ? C.kimb : '#fff', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, cursor:'pointer', transition:'all 0.15s' }}>
+                        {form.interest === opt && <div style={{ width:7, height:7, borderRadius:'50%', background:'#fff' }} />}
+                      </div>
+                      <span style={{ fontSize:'0.88rem', color: form.interest === opt ? C.kimbD : C.inkMid, fontWeight: form.interest === opt ? 600 : 400 }}>{opt}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {/* Submit */}
+              <PrimaryBtn onClick={handleSubmit}
+                disabled={!form.firstName || !form.email || !form.interest}
+                style={{ padding:'13px 36px', fontSize:'0.85rem' }}>
+                Submit Enquiry →
+              </PrimaryBtn>
+              <p style={{ marginTop:10, fontSize:'0.72rem', color: C.inkLt }}>* Required fields. All enquiries are handled in confidence.</p>
+            </>
+          )}
+        </Card>
+
+        {/* ── Right sidebar: About OSACO ── */}
+        <div style={{ display:'flex', flexDirection:'column', gap:20 }}>
+
+          {/* About OSACO */}
+          <Card style={{ padding:'24px 20px' }}>
+            <div style={{ marginBottom:16 }}>
+              <OsacoLogo height={28} />
+            </div>
+            <div style={{ marginBottom:4 }}>
+              <div style={{ display:'inline-block', background: C.kimbP, color: C.kimb, fontSize:'0.65rem', fontWeight:700, padding:'3px 10px', borderRadius:2, letterSpacing:'0.08em', textTransform:'uppercase', marginBottom:10 }}>About OSACO</div>
+            </div>
+            <p style={{ fontSize:'0.82rem', color: C.inkMid, lineHeight:1.7, marginBottom:12 }}>
+              OSACO Group provides expert investigators and specialists to help organisations predict, prevent and respond to human risk factors. We are agile, responsive and highly capable.
+            </p>
+            <p style={{ fontSize:'0.82rem', color: C.inkMid, lineHeight:1.7, marginBottom:16 }}>
+              We believe global systems work better when they display higher levels of ethics and transparency — and EchoMind is our commitment to building the training tools that make that possible.
+            </p>
+            <a href="https://www.osacogroup.com" target="_blank" rel="noreferrer"
+              style={{ display:'inline-flex', alignItems:'center', gap:6, color: C.kimb, fontWeight:700, fontSize:'0.78rem', textDecoration:'none', letterSpacing:'0.04em' }}>
+              🌐 osacogroup.com →
+            </a>
+          </Card>
+
+          {/* What we do */}
+          <Card style={{ padding:'24px 20px' }}>
+            <h4 style={{ fontFamily:'Bebas Neue', fontSize:'1.1rem', color: C.kimbD, letterSpacing:'0.05em', marginBottom:14 }}>What OSACO Does</h4>
+            {[
+              ['🔍', 'Investigations', 'Workplace misconduct, fraud and corruption investigations across all sectors.'],
+              ['🎓', 'Training', 'Interview, intelligence analysis and investigations training for professionals.'],
+              ['🛡', 'Safeguarding', 'Audit and review services to protect organisations and their people.'],
+              ['🤖', 'EchoMind', 'AI-powered avatar training for law enforcement, military and sales professionals.'],
+            ].map(([icon, title, desc]) => (
+              <div key={title} style={{ display:'flex', gap:12, marginBottom:14 }}>
+                <span style={{ fontSize:'1.1rem', marginTop:1 }}>{icon}</span>
+                <div>
+                  <div style={{ fontWeight:700, color: C.kimbD, fontSize:'0.82rem', marginBottom:2 }}>{title}</div>
+                  <div style={{ fontSize:'0.78rem', color: C.inkMute, lineHeight:1.5 }}>{desc}</div>
+                </div>
+              </div>
+            ))}
+          </Card>
+
+          {/* Global presence */}
+          <Card style={{ padding:'20px' }}>
+            <h4 style={{ fontFamily:'Bebas Neue', fontSize:'1.1rem', color: C.kimbD, letterSpacing:'0.05em', marginBottom:12 }}>Global Presence</h4>
+            {[
+              ['🇳🇿', 'New Zealand', 'osacogroup.com/new-zealand-workplace-investigations'],
+              ['🇺🇸', 'North America', 'osacogroup.com/usa'],
+              ['🌍', 'Africa', 'osacogroup.com/africa'],
+            ].map(([flag, region, url]) => (
+              <div key={region} style={{ display:'flex', alignItems:'center', gap:10, marginBottom:10 }}>
+                <span style={{ fontSize:'1.1rem' }}>{flag}</span>
+                <div>
+                  <div style={{ fontWeight:700, color: C.kimbD, fontSize:'0.8rem' }}>{region}</div>
+                  <a href={`https://www.${url}`} target="_blank" rel="noreferrer"
+                    style={{ fontSize:'0.72rem', color: C.kimb, textDecoration:'none' }}>
+                    {url}
+                  </a>
+                </div>
+              </div>
+            ))}
+          </Card>
+
+        </div>
+      </div>
+    </div>
+  );
+}
+ 
 /* ══════════════════════════════════════════════════════════
    APP ROOT
 ══════════════════════════════════════════════════════════ */
@@ -915,6 +1121,7 @@ function App() {
         {page==='Feedback' && <FeedbackPage />}
         {page==='Account' && <AccountPage />}
         {page==='Instructor' && <InstructorPage />}
+        {page==='Contact' && <ContactPage />}
       </div>
       <Footer />
     </div>
