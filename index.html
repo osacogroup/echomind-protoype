@@ -437,274 +437,422 @@ function InterviewPage() {
 /* ══════════════════════════════════════════════════════════
    PAGE: FEEDBACK
 ══════════════════════════════════════════════════════════ */
-function ScoreRing({ score }) {
-  const r = 52, circ = 2 * Math.PI * r;
-  const offset = circ - (score / 100) * circ;
-  return (
-    <svg width={126} height={126} viewBox="0 0 126 126">
-      <circle cx={63} cy={63} r={r} fill="none" stroke={C.borderL} strokeWidth={10} />
-      <circle cx={63} cy={63} r={r} fill="none" stroke={C.kimb} strokeWidth={10}
-        strokeDasharray={circ} strokeDashoffset={offset}
-        strokeLinecap="round" transform="rotate(-90 63 63)" />
-      <text x={63} y={57} textAnchor="middle" fontFamily="Bebas Neue" fontSize="32" fill={C.kimbD} letterSpacing="2">{score}</text>
-      <text x={63} y={75} textAnchor="middle" fontFamily="Open Sans" fontSize="10" fill={C.inkMute}>out of 100</text>
-    </svg>
-  );
-}
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-sans); background: transparent; }
+  .wrap { padding: 24px 28px; max-width: 1100px; }
+  .top-bar { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 24px; }
+  .breadcrumb { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-text-secondary); margin-bottom: 6px; }
+  .page-title { font-size: 22px; font-weight: 500; color: var(--color-text-primary); }
+  .back-btn { background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 6px; color: #534AB7; font-size: 12px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; padding: 0; }
+  .back-btn:hover { opacity: 0.75; }
+  .grid-2 { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 20px; }
+  .col { display: flex; flex-direction: column; gap: 16px; }
+  .card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); }
+  .card-pad { padding: 20px; }
+  .card-head { padding: 14px 18px; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .card-body { padding: 16px 18px; }
+  .section-label { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-text-secondary); margin-bottom: 12px; }
+  .score-row { display: flex; align-items: center; gap: 20px; margin-bottom: 20px; }
+  .score-ring-wrap { flex-shrink: 0; }
+  .badge-above { display: inline-block; background: #E1F5EE; color: #0F6E56; border-radius: 4px; padding: 3px 10px; font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; }
+  .score-title { font-size: 18px; font-weight: 500; color: var(--color-text-primary); }
+  .score-sub { font-size: 12px; color: var(--color-text-secondary); margin-top: 3px; }
+  .metric-row { margin-bottom: 12px; }
+  .metric-labels { display: flex; justify-content: space-between; margin-bottom: 5px; }
+  .metric-name { font-size: 12px; color: var(--color-text-secondary); }
+  .metric-val { font-size: 12px; font-weight: 600; }
+  .bar-track { height: 5px; background: var(--color-border-tertiary); border-radius: 3px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 3px; }
+  .mini-chart-wrap { display: flex; align-items: flex-end; gap: 10px; height: 90px; }
+  .mini-bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+  .mini-score { font-size: 11px; font-weight: 700; }
+  .mini-bar { width: 100%; border-radius: 2px 2px 0 0; }
+  .mini-label { font-size: 10px; color: var(--color-text-secondary); text-align: center; line-height: 1.3; }
+  .session-item { display: flex; align-items: center; gap: 12px; padding: 11px 18px; }
+  .session-item + .session-item { border-top: 0.5px solid var(--color-border-tertiary); }
+  .score-chip { width: 34px; height: 34px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; flex-shrink: 0; }
+  .session-info { flex: 1; }
+  .session-name { font-size: 13px; font-weight: 500; color: var(--color-text-primary); }
+  .session-meta { font-size: 11px; color: var(--color-text-secondary); margin-top: 2px; }
+  .view-btn { background: none; border: none; cursor: pointer; font-size: 11px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; }
+  .view-btn:hover { opacity: 0.7; }
+  .report-file { display: flex; align-items: center; gap: 12px; padding: 11px 14px; background: var(--color-background-secondary); border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-tertiary); }
+  .file-icon { font-size: 20px; color: var(--color-text-secondary); flex-shrink: 0; }
+  .file-info { flex: 1; }
+  .file-name { font-size: 13px; font-weight: 500; color: var(--color-text-primary); }
+  .file-meta { font-size: 11px; color: var(--color-text-secondary); margin-top: 2px; }
+  .action-btn { background: none; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); padding: 6px 12px; font-size: 11px; font-weight: 600; color: var(--color-text-primary); cursor: pointer; letter-spacing: 0.04em; flex-shrink: 0; }
+  .action-btn:hover { background: var(--color-background-secondary); }
+  .email-btn { background: none; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); padding: 6px 12px; font-size: 11px; font-weight: 600; color: var(--color-text-primary); cursor: pointer; letter-spacing: 0.04em; flex-shrink: 0; }
+  .email-btn:hover { background: var(--color-background-secondary); }
+  .report-section { display: flex; flex-direction: column; gap: 0; }
+  .report-block { padding: 14px 0; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .report-block:last-child { border-bottom: none; }
+  .report-block-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.09em; color: var(--color-text-secondary); margin-bottom: 8px; }
+  .report-text { font-size: 13px; color: var(--color-text-primary); line-height: 1.65; }
+  .report-point { display: flex; gap: 8px; margin-bottom: 5px; font-size: 13px; color: var(--color-text-primary); line-height: 1.6; }
+  .report-point-dot { flex-shrink: 0; margin-top: 5px; width: 5px; height: 5px; border-radius: 50%; }
+  .note-card { border-left: 3px solid; padding: 10px 12px; border-radius: 0 4px 4px 0; margin-bottom: 8px; }
+  .note-type { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px; }
+  .note-text { font-size: 12px; color: var(--color-text-primary); line-height: 1.6; }
+  .pill-domain { display: inline-block; border-radius: 4px; padding: 3px 10px; font-size: 10px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 6px; }
+  .session-detail-header { display: flex; align-items: center; gap: 20px; margin-bottom: 20px; }
+  .header-actions { margin-left: auto; display: flex; gap: 8px; }
+  .framework-block { padding: 12px 0; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .framework-block:last-child { border-bottom: none; }
+  .framework-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.09em; margin-bottom: 8px; }
+  .framework-item { display: flex; gap: 8px; margin-bottom: 4px; font-size: 12px; color: var(--color-text-primary); line-height: 1.55; }
+  .framework-term { font-weight: 600; min-width: 110px; flex-shrink: 0; }
+</style>
 
-const SESSION_DATA = [
-  {
-    id:1, date:'3 May 2026', domain:'Law Enforcement', scenario:'Investigative Interview',
-    duration:'14:07', score:78, flag:'green',
-    metrics:[
-      { label:'Rapport Building', value:84, color: C.success },
-      { label:'Open-Ended Questions', value:72, color: C.kimb },
-      { label:'Active Listening', value:80, color: C.corfu },
-      { label:'Non-Leading Language', value:68, color: C.warn },
-    ],
-    notes:[
-      { type:'Strength', color: C.success, bg: C.felt+'15', text:'Strong use of open-ended questioning in the opening phase. Subject guided toward free narrative with minimal leading, demonstrating solid PEACE model awareness.' },
-      { type:'Develop', color: C.warn, bg: C.daring+'15', text:'Interruptions at 4:22 and 9:07 cut off developing threads. Practise active listening pauses — allow 3–5 seconds after each response.' },
-      { type:'Next Session', color: C.corfu, bg: C.corfu+'12', text:'Focus on Cognitive Interview techniques, particularly context reinstatement to increase information yield.' },
-    ],
-  },
-  {
-    id:2, date:'29 Apr 2026', domain:'Law Enforcement', scenario:'Witness Interview',
-    duration:'11:32', score:71, flag:'green',
-    metrics:[
-      { label:'Rapport Building', value:75, color: C.success },
-      { label:'Open-Ended Questions', value:68, color: C.kimb },
-      { label:'Active Listening', value:74, color: C.corfu },
-      { label:'Non-Leading Language', value:65, color: C.warn },
-    ],
-    notes:[
-      { type:'Strength', color: C.success, bg: C.felt+'15', text:'Good initial rapport established using mirroring techniques. Subject appeared comfortable and forthcoming in early exchanges.' },
-      { type:'Develop', color: C.warn, bg: C.daring+'15', text:'Several closed questions in the middle phase limited free narrative. Work on transitioning from closed to open probes more fluidly.' },
-      { type:'Next Session', color: C.corfu, bg: C.corfu+'12', text:'Practise the TEDS model (Tell, Explain, Describe, Show) for eliciting fuller responses.' },
-    ],
-  },
-  {
-    id:3, date:'22 Apr 2026', domain:'Military', scenario:'Intelligence Debrief',
-    duration:'18:44', score:65, flag:'amber',
-    metrics:[
-      { label:'Rapport Building', value:60, color: C.success },
-      { label:'Open-Ended Questions', value:70, color: C.kimb },
-      { label:'Active Listening', value:62, color: C.corfu },
-      { label:'Non-Leading Language', value:66, color: C.warn },
-    ],
-    notes:[
-      { type:'Strength', color: C.success, bg: C.felt+'15', text:'Consistent use of open probes showed progress from prior session. Subject narrative was largely undirected.' },
-      { type:'Develop', color: C.warn, bg: C.daring+'15', text:'Rapport indicators remained low — the subject showed signs of disengagement from the 10-minute mark. Consider softer bridging language.' },
-      { type:'Next Session', color: C.corfu, bg: C.corfu+'12', text:'Review HUMINT rapport-building protocols. Focus on non-verbal acknowledgement cues.' },
-    ],
-  },
-  {
-    id:4, date:'15 Apr 2026', domain:'Sales', scenario:'Discovery & Closing',
-    duration:'09:18', score:82, flag:'green',
-    metrics:[
-      { label:'Rapport Building', value:88, color: C.success },
-      { label:'Open-Ended Questions', value:80, color: C.kimb },
-      { label:'Active Listening', value:83, color: C.corfu },
-      { label:'Non-Leading Language', value:76, color: C.warn },
-    ],
-    notes:[
-      { type:'Strength', color: C.success, bg: C.felt+'15', text:'Excellent consultative framing throughout. Discovery questions surfaced genuine pain points and the close felt natural and unforced.' },
-      { type:'Develop', color: C.warn, bg: C.daring+'15', text:'Objection handling could be more structured — consider ACEE (Acknowledge, Clarify, Explore, Evidence) for resistant prospects.' },
-      { type:'Next Session', color: C.corfu, bg: C.corfu+'12', text:'Progress to multi-stakeholder discovery scenarios to build complexity.' },
-    ],
-  },
-];
+<div class="wrap">
 
-function FeedbackPage() {
-  const [view, setView] = useState('overall'); // 'overall' | 'sessions'
-  const [selected, setSelected] = useState(null);
+  <div id="view-overall">
+    <div class="top-bar">
+      <div>
+        <div class="breadcrumb">Feedback</div>
+        <div class="page-title">Performance Review</div>
+      </div>
+    </div>
 
-  const avgScore = Math.round(SESSION_DATA.reduce((s,d) => s + d.score, 0) / SESSION_DATA.length);
-  const avgMetrics = SESSION_DATA[0].metrics.map((m, mi) => ({
-    ...m,
-    value: Math.round(SESSION_DATA.reduce((s,d) => s + d.metrics[mi].value, 0) / SESSION_DATA.length),
-  }));
-  const flagColors = { green: C.success, amber: C.warn, red: C.danger };
-  const flagBg    = { green: C.felt+'20', amber: C.daring+'20', red:'#b8303020' };
+    <div class="grid-2">
+      <div class="col">
+        <div class="card card-pad">
+          <div class="section-label">Full Performance Report</div>
+          <div class="score-row">
+            <div class="score-ring-wrap">
+              <svg width="108" height="108" viewBox="0 0 108 108">
+                <circle cx="54" cy="54" r="44" fill="none" stroke="#e5e5e5" stroke-width="8"/>
+                <circle cx="54" cy="54" r="44" fill="none" stroke="#534AB7" stroke-width="8"
+                  stroke-dasharray="276.46" stroke-dashoffset="66.35"
+                  stroke-linecap="round" transform="rotate(-90 54 54)"/>
+                <text x="54" y="50" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="500" fill="#111">74</text>
+                <text x="54" y="64" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#888">out of 100</text>
+              </svg>
+            </div>
+            <div>
+              <div class="badge-above">↑ On Track</div>
+              <div class="score-title">Jordan Mills</div>
+              <div class="score-sub">Detective Constable · Metropolitan Police</div>
+              <div class="score-sub" style="margin-top:2px;">3 of 4 sessions · avg 13:18</div>
+            </div>
+          </div>
+          <div class="metric-row">
+            <div class="metric-labels"><span class="metric-name">Rapport Building</span><span class="metric-val" style="color:#1D9E75;">78%</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width:78%;background:#1D9E75;"></div></div>
+          </div>
+          <div class="metric-row">
+            <div class="metric-labels"><span class="metric-name">Open-Ended Questions</span><span class="metric-val" style="color:#534AB7;">72%</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width:72%;background:#534AB7;"></div></div>
+          </div>
+          <div class="metric-row">
+            <div class="metric-labels"><span class="metric-name">Active Listening</span><span class="metric-val" style="color:#1D9E75;">77%</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width:77%;background:#1D9E75;"></div></div>
+          </div>
+          <div class="metric-row">
+            <div class="metric-labels"><span class="metric-name">Non-Leading Language</span><span class="metric-val" style="color:#BA7517;">68%</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width:68%;background:#BA7517;"></div></div>
+          </div>
+        </div>
 
-  const session = selected !== null ? SESSION_DATA.find(s => s.id === selected) : null;
+        <div class="card card-pad">
+          <div class="section-label">Summary</div>
+          <div class="report-section">
+            <div class="report-block">
+              <div class="report-block-title" style="color:#1D9E75;">Identified Strengths</div>
+              <div class="report-point"><div class="report-point-dot" style="background:#1D9E75;margin-top:7px;"></div><div><strong>Rapport Building</strong> — Consistently above 75 in every session. Mirroring and open framing in the Engage phase creates a productive interview environment from the outset.</div></div>
+              <div class="report-point"><div class="report-point-dot" style="background:#1D9E75;margin-top:7px;"></div><div><strong>PEACE Model — Opening and Account phases</strong> — Applied consistently with growing confidence. Free narrative maintained effectively with TED prompts used appropriately.</div></div>
+              <div class="report-point"><div class="report-point-dot" style="background:#1D9E75;margin-top:7px;"></div><div><strong>Active Listening trend</strong> — Improved each session (74 → 78 → 80), indicating coaching feedback is being absorbed and applied between sessions.</div></div>
+            </div>
+            <div class="report-block">
+              <div class="report-block-title" style="color:#BA7517;">Development Areas</div>
+              <div class="report-point"><div class="report-point-dot" style="background:#BA7517;margin-top:7px;"></div><div><strong>Non-Leading Language — Closure Phase</strong> — Leading patterns identified in all three completed sessions. Under time pressure there is a shift from open TED prompts to closed confirmatory questions.</div></div>
+              <div class="report-point"><div class="report-point-dot" style="background:#BA7517;margin-top:7px;"></div><div><strong>Interruption Management</strong> — Frequency has reduced session on session, but further reduction is needed. Each interruption is a missed opportunity for unexpected threads to develop.</div></div>
+            </div>
+            <div class="report-block">
+              <div class="report-block-title" style="color:#534AB7;">Practical Exercises</div>
+              <div class="report-point"><div class="report-point-dot" style="background:#534AB7;margin-top:7px;"></div><div><strong>PEACE Phase Self-Assessment</strong> (15 min/session) — Write all 5 phases and objectives before each session. Score 1-5 on each phase immediately after. Target consistent 4+ before advancing.</div></div>
+              <div class="report-point"><div class="report-point-dot" style="background:#534AB7;margin-top:7px;"></div><div><strong>Non-Leading Language Daily Drill</strong> (10 min/day) — Write 10 leading questions, rewrite as open alternatives, practise aloud. Example: "Were you there?" becomes "Where were you at that time?"</div></div>
+              <div class="report-point"><div class="report-point-dot" style="background:#534AB7;margin-top:7px;"></div><div><strong>Interruption Countdown Tracker</strong> (5 min post-session) — Log timestamp and context of every interruption. Apply 4-second pause rule. Target: zero interruptions in session 4.</div></div>
+            </div>
+            <div class="report-block">
+              <div class="report-block-title" style="color:#888;">Framework Reference</div>
+              <div class="framework-block">
+                <div class="framework-title" style="color:#534AB7;">PEACE Model</div>
+                <div class="framework-item"><span class="framework-term">Preparation</span><span>Set objectives, review background, plan opening strategy</span></div>
+                <div class="framework-item"><span class="framework-term">Engage &amp; Explain</span><span>Name, active listening posture, clear purpose statement</span></div>
+                <div class="framework-item"><span class="framework-term">Account</span><span>Open questions only — TED prompts (Tell, Explain, Describe)</span></div>
+                <div class="framework-item"><span class="framework-term">Closure</span><span>Summarise account, invite corrections, open invitation</span></div>
+                <div class="framework-item"><span class="framework-term">Evaluate</span><span>Self-assess each phase, note leading moments for next session</span></div>
+              </div>
+              <div class="framework-block">
+                <div class="framework-title" style="color:#534AB7;">Cognitive Interview</div>
+                <div class="framework-item"><span class="framework-term">Context Reinstatement</span><span>Ask subject to mentally return to the scene in detail</span></div>
+                <div class="framework-item"><span class="framework-term">Report Everything</span><span>Encourage all detail, even if it seems irrelevant</span></div>
+                <div class="framework-item"><span class="framework-term">Recall in Reverse</span><span>Events in reverse chronological order</span></div>
+                <div class="framework-item"><span class="framework-term">Change Perspective</span><span>What a bystander might have observed at the scene</span></div>
+              </div>
+              <div class="framework-block">
+                <div class="framework-title" style="color:#534AB7;">TED Prompting</div>
+                <div class="framework-item"><span class="framework-term">Tell</span><span>Open invitation to free narrative with no direction</span></div>
+                <div class="framework-item"><span class="framework-term">Explain</span><span>Clarify without leading — use the subject's own words</span></div>
+                <div class="framework-item"><span class="framework-term">Describe</span><span>Sensory recall for additional detail</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-  return (
-    <div style={{ padding:'28px 32px' }}>
-      {/* Header + tab toggle */}
-      <div style={{ display:'flex', alignItems:'flex-end', justifyContent:'space-between', marginBottom:28 }}>
-        <SectionHeading label="Feedback" title="Performance Review" subtitle="" />
-
+        <div class="card card-pad">
+          <div class="section-label">Reports</div>
+          <div class="report-file">
+            <span class="file-icon">📄</span>
+            <div class="file-info">
+              <div class="file-name">Full Performance Report — Jordan Mills</div>
+              <div class="file-meta">PDF · 3 May 2026 · All sessions · Law Enforcement</div>
+            </div>
+            <button class="action-btn">⬇ Download</button>
+            <button class="email-btn">✉ Email</button>
+          </div>
+        </div>
       </div>
 
-      {/* ── OVERALL VIEW ── */}
-      {view === 'overall' && (
-        <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:24 }}>
-          {/* Left: aggregate score */}
-          <div style={{ display:'flex', flexDirection:'column', gap:20 }}>
-            <Card style={{ padding:'28px 24px' }}>
-              <div style={{ display:'flex', alignItems:'center', gap:24, marginBottom:28 }}>
-                <ScoreRing score={avgScore} />
-                <div>
-                  <div style={{ display:'inline-block', background: C.felt+'22', color: C.success,
-                    borderRadius:2, padding:'4px 12px', fontSize:'0.72rem', fontWeight:700,
-                    letterSpacing:'0.08em', textTransform:'uppercase', marginBottom:8 }}>
-                    ↑ Above Average
-                  </div>
-                  <h3 style={{ fontFamily:'Bebas Neue', fontSize:'1.8rem', color: C.kimbD, letterSpacing:'0.04em' }}>Overall Performance</h3>
-                  <div style={{ color: C.inkMute, fontSize:'0.82rem', marginTop:4 }}>8 of 10 sessions completed</div>
-                </div>
-              </div>
-              <div style={{ display:'flex', flexDirection:'column', gap:16 }}>
-                {avgMetrics.map(m => (
-                  <div key={m.label}>
-                    <div style={{ display:'flex', justifyContent:'space-between', marginBottom:6 }}>
-                      <span style={{ fontSize:'0.82rem', color: C.inkMid }}>{m.label}</span>
-                      <span style={{ fontSize:'0.82rem', fontWeight:700, color: m.color }}>{m.value}%</span>
-                    </div>
-                    <ProgressBar value={m.value} color={m.color} />
-                  </div>
-                ))}
-              </div>
-            </Card>
-
-            {/* Download report */}
-            <Card style={{ padding:'18px 20px' }}>
-              <h4 style={{ fontFamily:'Bebas Neue', fontSize:'1.1rem', color: C.kimbD, letterSpacing:'0.05em', marginBottom:14 }}>Reports</h4>
-              <div style={{ display:'flex', alignItems:'center', gap:14, padding:'12px 14px',
-                background: C.surface, borderRadius:3, border:`1.5px solid ${C.borderL}` }}>
-                <span style={{ fontSize:'1.3rem' }}>📄</span>
-                <div style={{ flex:1 }}>
-                  <div style={{ fontWeight:600, color: C.ink, fontSize:'0.85rem' }}>Full Performance Report</div>
-                  <div style={{ fontSize:'0.72rem', color: C.inkLt, marginTop:2 }}>PDF · 3 May 2026 · All sessions</div>
-                </div>
-                <GhostBtn style={{ padding:'6px 14px', fontSize:'0.72rem' }}>Download PDF</GhostBtn>
-              </div>
-            </Card>
+      <div class="col">
+        <div class="card card-pad">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px;">
+            <div class="section-label" style="margin-bottom:0;">Score Trend</div>
+            <span style="font-size:10px;color:#888;font-style:italic;">Example scenarios shown</span>
           </div>
-
-          {/* Right: score trend + session summary list */}
-          <div style={{ display:'flex', flexDirection:'column', gap:20 }}>
-            {/* Score trend */}
-            <Card style={{ padding:'22px 20px' }}>
-              <div style={{ display:'flex', alignItems:'baseline', justifyContent:'space-between', marginBottom:16 }}>
-                <h4 style={{ fontFamily:'Bebas Neue', fontSize:'1.1rem', color: C.kimbD, letterSpacing:'0.05em' }}>Score Trend</h4>
-                <span style={{ fontSize:'0.68rem', color: C.inkLt, fontStyle:'italic' }}>Example scenarios shown</span>
-              </div>
-              <div style={{ display:'flex', alignItems:'flex-end', gap:14, height:100 }}>
-                {[
-                  { label:'Law Enforcement', score:74, color: C.kimbD },
-                  { label:'Military', score:65, color: C.corfu },
-                  { label:'Sales', score:82, color: C.felt },
-                ].map((s, i) => (
-                  <div key={s.label} style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', gap:6 }}>
-                    <div style={{ fontSize:'0.75rem', fontWeight:700, color: s.color }}>{s.score}</div>
-                    <div style={{ width:'100%', borderRadius:'2px 2px 0 0',
-                      height:`${(s.score / 100) * 68}px`,
-                      background: s.color + '55',
-                      border:`2px solid ${s.color}`,
-                    }} />
-                    <div style={{ fontSize:'0.62rem', color: C.inkLt, textAlign:'center', lineHeight:1.3 }}>{s.label}</div>
-                  </div>
-                ))}
-              </div>
-            </Card>
-
-            {/* Session list summary */}
-            <Card>
-              <div style={{ padding:'14px 18px', borderBottom:`1.5px solid ${C.borderL}` }}>
-                <h4 style={{ fontFamily:'Bebas Neue', fontSize:'1.1rem', color: C.kimbD, letterSpacing:'0.05em' }}>Session History</h4>
-              </div>
-              <div style={{ display:'flex', flexDirection:'column' }}>
-                {[
-                  { id:1, domain:'Law Enforcement', scenario:'Investigative Interview', date:'3 May 2026', duration:'14:07', score:74, color: C.kimbD },
-                  { id:3, domain:'Military',         scenario:'Intelligence Debrief',    date:'22 Apr 2026', duration:'18:44', score:65, color: C.corfu },
-                  { id:4, domain:'Sales',            scenario:'Discovery & Closing',     date:'15 Apr 2026', duration:'09:18', score:82, color: C.felt },
-                ].map((s, i) => (
-                  <div key={s.id} style={{
-                    display:'flex', alignItems:'center', gap:14, padding:'13px 18px',
-                    borderTop: i > 0 ? `1px solid ${C.borderL}` : 'none',
-                  }}>
-                    <div style={{ width:36, height:36, borderRadius:3, background: s.color + '22',
-                      display:'flex', alignItems:'center', justifyContent:'center',
-                      fontFamily:'Bebas Neue', fontSize:'1.05rem', color: s.color, letterSpacing:'0.04em',
-                      border:`2px solid ${s.color}55` }}>
-                      {s.score}
-                    </div>
-                    <div style={{ flex:1 }}>
-                      <div style={{ fontWeight:600, color: C.ink, fontSize:'0.85rem' }}>{s.scenario}</div>
-                      <div style={{ fontSize:'0.72rem', color: C.inkLt, marginTop:2 }}>{s.domain} · {s.date} · {s.duration}</div>
-                    </div>
-                    <button onClick={() => { setView('sessions'); setSelected(s.id); }} style={{
-                      background:'none', border:'none', cursor:'pointer', color: s.color,
-                      fontFamily:'Open Sans', fontWeight:700, fontSize:'0.72rem',
-                      letterSpacing:'0.06em', textTransform:'uppercase',
-                    }}>View →</button>
-                  </div>
-                ))}
-              </div>
-            </Card>
+          <div class="mini-chart-wrap">
+            <div class="mini-bar-col">
+              <div class="mini-score" style="color:#3C3489;">74</div>
+              <div class="mini-bar" style="height:67px;background:#EEEDFE;border:2px solid #534AB7;"></div>
+              <div class="mini-label">Law Enforcement</div>
+            </div>
+            <div class="mini-bar-col">
+              <div class="mini-score" style="color:#0F6E56;">65</div>
+              <div class="mini-bar" style="height:59px;background:#E1F5EE;border:2px solid #1D9E75;"></div>
+              <div class="mini-label">Military</div>
+            </div>
+            <div class="mini-bar-col">
+              <div class="mini-score" style="color:#3B6D11;">82</div>
+              <div class="mini-bar" style="height:74px;background:#EAF3DE;border:2px solid #639922;"></div>
+              <div class="mini-label">Sales</div>
+            </div>
           </div>
         </div>
-      )}
 
-      {/* ── SESSIONS VIEW ── */}
-      {view === 'sessions' && session && (
-        <div style={{ display:'flex', flexDirection:'column', gap:20 }}>
-          {/* Back button */}
-          <div>
-            <button onClick={() => { setView('overall'); setSelected(null); }} style={{
-              background:'none', border:'none', cursor:'pointer', display:'flex', alignItems:'center', gap:6,
-              color: C.kimb, fontFamily:'Open Sans', fontWeight:700, fontSize:'0.78rem',
-              letterSpacing:'0.07em', textTransform:'uppercase', padding:0,
-            }}>
-              <span style={{ fontSize:'1rem', lineHeight:1 }}>←</span> Back to Overview
-            </button>
+        <div class="card">
+          <div class="card-head">
+            <div class="section-label" style="margin-bottom:0;">Session History</div>
           </div>
-
-          {/* Score + header */}
-          <Card style={{ padding:'24px' }}>
-            <div style={{ display:'flex', alignItems:'center', gap:24, marginBottom:24 }}>
-              <ScoreRing score={session.score} />
-              <div>
-                <PillLabel color={C.kimb}>{session.domain}</PillLabel>
-                <h3 style={{ fontFamily:'Bebas Neue', fontSize:'1.8rem', color: C.kimbD, letterSpacing:'0.04em' }}>{session.scenario}</h3>
-                <div style={{ color: C.inkMute, fontSize:'0.82rem', marginTop:4 }}>{session.date} · {session.duration} duration</div>
-              </div>
-              <div style={{ marginLeft:'auto' }}>
-                <GhostBtn style={{ padding:'8px 16px', fontSize:'0.72rem' }}>Download PDF</GhostBtn>
-              </div>
+          <div class="session-item">
+            <div class="score-chip" style="background:#EEEDFE;color:#3C3489;border:1.5px solid #AFA9EC;">78</div>
+            <div class="session-info">
+              <div class="session-name">Investigative Interview</div>
+              <div class="session-meta">Law Enforcement · 3 May 2026 · 14:07</div>
             </div>
-            <div style={{ display:'flex', flexDirection:'column', gap:14 }}>
-              {session.metrics.map(m => (
-                <div key={m.label}>
-                  <div style={{ display:'flex', justifyContent:'space-between', marginBottom:6 }}>
-                    <span style={{ fontSize:'0.82rem', color: C.inkMid }}>{m.label}</span>
-                    <span style={{ fontSize:'0.82rem', fontWeight:700, color: m.color }}>{m.value}%</span>
-                  </div>
-                  <ProgressBar value={m.value} color={m.color} />
-                </div>
-              ))}
+            <button class="view-btn" style="color:#534AB7;" onclick="showSession('s1')">View →</button>
+          </div>
+          <div class="session-item">
+            <div class="score-chip" style="background:#EEEDFE;color:#3C3489;border:1.5px solid #AFA9EC;">71</div>
+            <div class="session-info">
+              <div class="session-name">Witness Interview</div>
+              <div class="session-meta">Law Enforcement · 29 Apr 2026 · 11:32</div>
             </div>
-          </Card>
-
-          {/* Written notes */}
-          <Card style={{ padding:'22px 20px' }}>
-            <h4 style={{ fontFamily:'Bebas Neue', fontSize:'1.1rem', color: C.kimbD, letterSpacing:'0.05em', marginBottom:16 }}>Written Feedback</h4>
-            <div style={{ display:'flex', flexDirection:'column', gap:12 }}>
-              {session.notes.map(n => (
-                <div key={n.type} style={{ borderLeft:`3px solid ${n.color}`, background: n.bg, padding:'11px 13px', borderRadius:'0 4px 4px 0' }}>
-                  <div style={{ fontSize:'0.65rem', fontWeight:700, color: n.color, textTransform:'uppercase', letterSpacing:'0.1em', marginBottom:5 }}>{n.type}</div>
-                  <p style={{ fontSize:'0.82rem', color: C.inkMid, lineHeight:1.6 }}>{n.text}</p>
-                </div>
-              ))}
+            <button class="view-btn" style="color:#534AB7;" onclick="showSession('s2')">View →</button>
+          </div>
+          <div class="session-item">
+            <div class="score-chip" style="background:#E1F5EE;color:#085041;border:1.5px solid #5DCAA5;">65</div>
+            <div class="session-info">
+              <div class="session-name">Intelligence Debrief</div>
+              <div class="session-meta">Military · 22 Apr 2026 · 18:44</div>
             </div>
-          </Card>
+            <button class="view-btn" style="color:#1D9E75;" onclick="showSession('s3')">View →</button>
+          </div>
         </div>
-      )}
+      </div>
     </div>
-  );
+  </div>
+
+  <div id="view-session" style="display:none;">
+    <div style="margin-bottom:20px;">
+      <button class="back-btn" onclick="showOverall()">← Back to Overview</button>
+    </div>
+    <div class="grid-2">
+      <div class="col">
+        <div class="card card-pad" id="session-score-card"></div>
+        <div class="card card-pad" id="session-notes-card"></div>
+        <div class="card card-pad" id="session-report-card"></div>
+      </div>
+      <div class="col">
+        <div class="card card-pad" id="session-detail-card"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const SESSIONS = {
+  s1: {
+    id: 's1', scenario: 'Investigative Interview', domain: 'Law Enforcement',
+    date: '3 May 2026', duration: '14:07', score: 78,
+    accentColor: '#534AB7', accentLight: '#EEEDFE', accentDark: '#3C3489',
+    metrics: [
+      { label: 'Rapport Building', value: 84, color: '#1D9E75' },
+      { label: 'Open-Ended Questions', value: 72, color: '#534AB7' },
+      { label: 'Active Listening', value: 80, color: '#1D9E75' },
+      { label: 'Non-Leading Language', value: 68, color: '#BA7517' },
+    ],
+    summary: 'In this session Jordan scored 78 overall — above average for the Law Enforcement domain. Rapport building reached its highest recorded point at 84, with effective mirroring and open framing in the Engage phase. Open-ended question use was strong in the opening phase, with appropriate TED prompting maintaining free narrative. Non-leading language in the Closure phase remains the primary development focus, with two leading questions identified at the 11-minute mark.',
+    notes: [
+      { type: 'Strength', color: '#1D9E75', bg: '#E1F5EE', text: 'Strong use of open-ended questioning in the opening phase. Subject guided toward free narrative with minimal leading, demonstrating solid PEACE model awareness.' },
+      { type: 'Develop', color: '#BA7517', bg: '#FAEEDA', text: 'Interruptions at 4:22 and 9:07 cut off developing threads. Practise active listening pauses — allow 3–5 seconds after each response.' },
+      { type: 'Next Session', color: '#534AB7', bg: '#EEEDFE', text: 'Focus on Cognitive Interview techniques, particularly context reinstatement to increase information yield.' },
+    ],
+    exercises: [
+      'Before session 4, review your non-leading language substitution list.',
+      'Apply the 4-second pause rule — target zero interruptions this session.',
+      'In the Closure phase, prepare 3 open TED questions in advance before starting.',
+    ]
+  },
+  s2: {
+    id: 's2', scenario: 'Witness Interview', domain: 'Law Enforcement',
+    date: '29 Apr 2026', duration: '11:32', score: 71,
+    accentColor: '#534AB7', accentLight: '#EEEDFE', accentDark: '#3C3489',
+    metrics: [
+      { label: 'Rapport Building', value: 75, color: '#1D9E75' },
+      { label: 'Open-Ended Questions', value: 68, color: '#534AB7' },
+      { label: 'Active Listening', value: 74, color: '#1D9E75' },
+      { label: 'Non-Leading Language', value: 65, color: '#BA7517' },
+    ],
+    summary: 'This session returned a score of 71 — within range for the programme at this stage. Initial rapport was established effectively using mirroring techniques in the Engage phase. Mid-session questioning showed a shift toward closed questions that limited the free narrative, reducing the overall open-ended questions score from the previous session. Non-leading language remained the lowest metric, consistent with the pattern across all completed sessions.',
+    notes: [
+      { type: 'Strength', color: '#1D9E75', bg: '#E1F5EE', text: 'Good initial rapport established using mirroring techniques. Subject appeared comfortable and forthcoming in early exchanges.' },
+      { type: 'Develop', color: '#BA7517', bg: '#FAEEDA', text: 'Several closed questions in the middle phase limited free narrative. Work on transitioning from closed to open probes more fluidly.' },
+      { type: 'Next Session', color: '#534AB7', bg: '#EEEDFE', text: 'Practise the TEDS model (Tell, Explain, Describe, Show) for eliciting fuller responses.' },
+    ],
+    exercises: [
+      'Write out 5 closed questions you used in this session and rewrite each as an open probe.',
+      'Before the next session, practise transitioning between question types aloud.',
+      'Review TED prompting — set a goal of no closed questions in the Account phase.',
+    ]
+  },
+  s3: {
+    id: 's3', scenario: 'Intelligence Debrief', domain: 'Military',
+    date: '22 Apr 2026', duration: '18:44', score: 65,
+    accentColor: '#1D9E75', accentLight: '#E1F5EE', accentDark: '#085041',
+    metrics: [
+      { label: 'Rapport Building', value: 60, color: '#1D9E75' },
+      { label: 'Open-Ended Questions', value: 70, color: '#534AB7' },
+      { label: 'Active Listening', value: 62, color: '#1D9E75' },
+      { label: 'Non-Leading Language', value: 66, color: '#BA7517' },
+    ],
+    summary: 'This was a Military domain session using the Intelligence Debrief scenario, which carries higher complexity than standard law enforcement scenarios. The overall score of 65 reflects the increased challenge of rapport-building with a subject showing lower cooperation indicators. Open-ended question use was the strongest metric at 70, demonstrating that TED prompting has been retained across domain contexts. Rapport and active listening were both below the Law Enforcement average, with visible subject disengagement from the 10-minute mark.',
+    notes: [
+      { type: 'Strength', color: '#1D9E75', bg: '#E1F5EE', text: 'Consistent use of open probes showed progress from prior session. Subject narrative was largely undirected.' },
+      { type: 'Develop', color: '#BA7517', bg: '#FAEEDA', text: 'Rapport indicators remained low — the subject showed signs of disengagement from the 10-minute mark. Consider softer bridging language.' },
+      { type: 'Next Session', color: '#534AB7', bg: '#EEEDFE', text: 'Review HUMINT rapport-building protocols. Focus on non-verbal acknowledgement cues.' },
+    ],
+    exercises: [
+      'Review HUMINT rapport-building protocols before the next Military scenario.',
+      'Practise bridging language for re-engaging a disengaged subject.',
+      'Focus on non-verbal acknowledgement cues — nod, lean, maintain eye contact.',
+    ]
+  }
+};
+
+function renderMetrics(metrics) {
+  return metrics.map(m => `
+    <div class="metric-row">
+      <div class="metric-labels"><span class="metric-name">${m.label}</span><span class="metric-val" style="color:${m.color};">${m.value}%</span></div>
+      <div class="bar-track"><div class="bar-fill" style="width:${m.value}%;background:${m.color};"></div></div>
+    </div>
+  `).join('');
 }
+
+function renderNotes(notes) {
+  return notes.map(n => `
+    <div class="note-card" style="border-left-color:${n.color};background:${n.bg};">
+      <div class="note-type" style="color:${n.color};">${n.type}</div>
+      <div class="note-text">${n.text}</div>
+    </div>
+  `).join('');
+}
+
+function showSession(id) {
+  const s = SESSIONS[id];
+  const r = 44, circ = 2 * Math.PI * r;
+  const offset = circ - (s.score / 100) * circ;
+
+  document.getElementById('session-score-card').innerHTML = `
+    <div class="session-detail-header">
+      <div>
+        <svg width="108" height="108" viewBox="0 0 108 108">
+          <circle cx="54" cy="54" r="${r}" fill="none" stroke="#e5e5e5" stroke-width="8"/>
+          <circle cx="54" cy="54" r="${r}" fill="none" stroke="${s.accentColor}" stroke-width="8"
+            stroke-dasharray="${circ.toFixed(2)}" stroke-dashoffset="${offset.toFixed(2)}"
+            stroke-linecap="round" transform="rotate(-90 54 54)"/>
+          <text x="54" y="50" text-anchor="middle" font-family="sans-serif" font-size="26" font-weight="500" fill="#111">${s.score}</text>
+          <text x="54" y="64" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#888">out of 100</text>
+        </svg>
+      </div>
+      <div style="flex:1;">
+        <div class="pill-domain" style="background:${s.accentLight};color:${s.accentDark};">${s.domain}</div>
+        <div class="score-title">${s.scenario}</div>
+        <div class="score-sub">${s.date} · ${s.duration} duration</div>
+      </div>
+      <div class="header-actions">
+        <button class="action-btn">⬇ Download</button>
+        <button class="email-btn">✉ Email</button>
+      </div>
+    </div>
+    <div class="section-label">Session Metrics</div>
+    ${renderMetrics(s.metrics)}
+  `;
+
+  document.getElementById('session-notes-card').innerHTML = `
+    <div class="section-label">Written Feedback</div>
+    ${renderNotes(s.notes)}
+  `;
+
+  document.getElementById('session-report-card').innerHTML = `
+    <div class="section-label">Session Report</div>
+    <div class="report-file">
+      <span class="file-icon">📄</span>
+      <div class="file-info">
+        <div class="file-name">${s.scenario} Report</div>
+        <div class="file-meta">PDF · ${s.date} · ${s.domain}</div>
+      </div>
+      <button class="action-btn">⬇ Download</button>
+      <button class="email-btn">✉ Email</button>
+    </div>
+  `;
+
+  document.getElementById('session-detail-card').innerHTML = `
+    <div class="section-label">Session Summary</div>
+    <div class="report-text" style="margin-bottom:20px;">${s.summary}</div>
+    <div class="section-label">Recommended Exercises</div>
+    <div class="report-block">
+      ${s.exercises.map(e => `
+        <div class="report-point">
+          <div class="report-point-dot" style="background:${s.accentColor};margin-top:7px;"></div>
+          <div>${e}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+
+  document.getElementById('view-overall').style.display = 'none';
+  document.getElementById('view-session').style.display = 'block';
+}
+
+function showOverall() {
+  document.getElementById('view-overall').style.display = 'block';
+  document.getElementById('view-session').style.display = 'none';
+}
+</script>
 
 /* ══════════════════════════════════════════════════════════
    PAGE: ACCOUNT
