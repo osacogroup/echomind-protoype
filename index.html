@@ -465,29 +465,7 @@ function FeedbackPage() {
       ],
     },
     s2: {
-      id: 's2', scenario: 'Witness Interview', domain: 'Law Enforcement',
-      date: '29 Apr 2026', duration: '11:32', score: 71,
-      accentColor: C.kimb, accentLight: C.kimb + '18', accentDark: C.kimbD,
-      metrics: [
-        { label: 'Rapport Building', value: 75, color: C.success },
-        { label: 'Open-Ended Questions', value: 68, color: C.kimb },
-        { label: 'Active Listening', value: 74, color: C.corfu },
-        { label: 'Non-Leading Language', value: 65, color: C.warn },
-      ],
-      summary: 'This session returned a score of 71 — within range for the programme at this stage. Initial rapport was established effectively using mirroring techniques in the Engage phase. Mid-session questioning showed a shift toward closed questions that limited the free narrative, reducing the overall open-ended questions score from the previous session. Non-leading language remained the lowest metric, consistent with the pattern across all completed sessions.',
-      notes: [
-        { type: 'Strength', color: C.success, bg: C.felt + '15', text: 'Good initial rapport established using mirroring techniques. Subject appeared comfortable and forthcoming in early exchanges.' },
-        { type: 'Develop', color: C.warn, bg: C.daring + '15', text: 'Several closed questions in the middle phase limited free narrative. Work on transitioning from closed to open probes more fluidly.' },
-        { type: 'Next Session', color: C.corfu, bg: C.corfu + '12', text: 'Practise the TEDS model (Tell, Explain, Describe, Show) for eliciting fuller responses.' },
-      ],
-      exercises: [
-        'Write out 5 closed questions you used in this session and rewrite each as an open probe.',
-        'Before the next session, practise transitioning between question types aloud.',
-        'Review TED prompting — set a goal of no closed questions in the Account phase.',
-      ],
-    },
-    s3: {
-      id: 's3', scenario: 'Intelligence Debrief', domain: 'Military',
+      id: 's2', scenario: 'Intelligence Debrief', domain: 'Military',
       date: '22 Apr 2026', duration: '18:44', score: 65,
       accentColor: C.corfu, accentLight: C.corfu + '18', accentDark: C.corfu,
       metrics: [
@@ -498,14 +476,36 @@ function FeedbackPage() {
       ],
       summary: 'This was a Military domain session using the Intelligence Debrief scenario, which carries higher complexity than standard law enforcement scenarios. The overall score of 65 reflects the increased challenge of rapport-building with a subject showing lower cooperation indicators. Open-ended question use was the strongest metric at 70, demonstrating that TED prompting has been retained across domain contexts. Rapport and active listening were both below the Law Enforcement average, with visible subject disengagement from the 10-minute mark.',
       notes: [
-        { type: 'Strength', color: C.success, bg: C.felt + '15', text: 'Consistent use of open probes showed progress from prior session. Subject narrative was largely undirected.' },
-        { type: 'Develop', color: C.warn, bg: C.daring + '15', text: 'Rapport indicators remained low — the subject showed signs of disengagement from the 10-minute mark. Consider softer bridging language.' },
-        { type: 'Next Session', color: C.corfu, bg: C.corfu + '12', text: 'Review HUMINT rapport-building protocols. Focus on non-verbal acknowledgement cues.' },
+        { type: 'Strength', color: C.success, bg: C.felt + '15', text: 'Consistent use of open probes showed progress from the prior session. Subject narrative was largely undirected.' },
+        { type: 'Develop', color: C.warn, bg: C.daring + '15', text: 'Rapport indicators remained low — the subject showed signs of disengagement from the 10-minute mark. Consider softer bridging language to re-engage.' },
+        { type: 'Next Session', color: C.corfu, bg: C.corfu + '12', text: 'Review HUMINT rapport-building protocols. Focus on non-verbal acknowledgement cues to maintain subject engagement.' },
       ],
       exercises: [
         'Review HUMINT rapport-building protocols before the next Military scenario.',
-        'Practise bridging language for re-engaging a disengaged subject.',
-        'Focus on non-verbal acknowledgement cues — nod, lean, maintain eye contact.',
+        'Practise bridging language techniques for re-engaging a disengaged subject.',
+        'Focus on non-verbal acknowledgement cues — nod, lean, maintain eye contact throughout.',
+      ],
+    },
+    s3: {
+      id: 's3', scenario: 'Discovery & Closing', domain: 'Sales',
+      date: '15 Apr 2026', duration: '09:18', score: 82,
+      accentColor: C.felt, accentLight: C.felt + '18', accentDark: C.felt,
+      metrics: [
+        { label: 'Rapport Building', value: 88, color: C.success },
+        { label: 'Open-Ended Questions', value: 80, color: C.kimb },
+        { label: 'Active Listening', value: 83, color: C.corfu },
+        { label: 'Non-Leading Language', value: 76, color: C.warn },
+      ],
+      summary: 'This Sales domain session returned the highest score across all completed sessions at 82. Consultative framing was applied consistently throughout, with discovery questions effectively surfacing genuine pain points. The close felt natural and unforced, reflecting strong preparation and active listening in the mid-session phase. Objection handling was the primary development area — responses were effective but lacked a structured framework, which became noticeable with a resistant prospect in the final phase.',
+      notes: [
+        { type: 'Strength', color: C.success, bg: C.felt + '15', text: 'Excellent consultative framing throughout. Discovery questions surfaced genuine pain points and the close felt natural and unforced.' },
+        { type: 'Develop', color: C.warn, bg: C.daring + '15', text: 'Objection handling could be more structured — consider the ACEE framework (Acknowledge, Clarify, Explore, Evidence) for resistant prospects.' },
+        { type: 'Next Session', color: C.corfu, bg: C.corfu + '12', text: 'Progress to multi-stakeholder discovery scenarios to build complexity and practise managing competing priorities in the room.' },
+      ],
+      exercises: [
+        'Study the ACEE framework and practise applying it to 3 common objection types.',
+        'Role-play a multi-stakeholder discovery call — identify each stakeholder\'s individual pain point.',
+        'Review your closing language — aim for a single clear close rather than multiple attempts.',
       ],
     },
   };
@@ -550,9 +550,21 @@ function FeedbackPage() {
   ];
 
   const sessionList = [
-    { id: 's1', scenario: 'Investigative Interview', domain: 'Law Enforcement', date: '3 May 2026', duration: '14:07', score: 78, chipBg: C.kimb + '22', chipColor: C.kimbD, chipBorder: C.kimb + '55', btnColor: C.kimb },
-    { id: 's2', scenario: 'Witness Interview', domain: 'Law Enforcement', date: '29 Apr 2026', duration: '11:32', score: 71, chipBg: C.kimb + '22', chipColor: C.kimbD, chipBorder: C.kimb + '55', btnColor: C.kimb },
-    { id: 's3', scenario: 'Intelligence Debrief', domain: 'Military', date: '22 Apr 2026', duration: '18:44', score: 65, chipBg: C.corfu + '22', chipColor: C.corfu, chipBorder: C.corfu + '55', btnColor: C.corfu },
+    {
+      id: 's1', scenario: 'Investigative Interview', domain: 'Law Enforcement',
+      date: '3 May 2026', duration: '14:07', score: 78,
+      chipBg: C.kimb + '22', chipColor: C.kimbD, chipBorder: C.kimb + '55', btnColor: C.kimb,
+    },
+    {
+      id: 's2', scenario: 'Intelligence Debrief', domain: 'Military',
+      date: '22 Apr 2026', duration: '18:44', score: 65,
+      chipBg: C.corfu + '22', chipColor: C.corfu, chipBorder: C.corfu + '55', btnColor: C.corfu,
+    },
+    {
+      id: 's3', scenario: 'Discovery & Closing', domain: 'Sales',
+      date: '15 Apr 2026', duration: '09:18', score: 82,
+      chipBg: C.felt + '22', chipColor: C.felt, chipBorder: C.felt + '55', btnColor: C.felt,
+    },
   ];
 
   const ScoreRing = ({ score, color }) => {
@@ -597,6 +609,7 @@ function FeedbackPage() {
 
   return (
     <div style={{ padding: '28px 32px' }}>
+
       {/* ── OVERALL VIEW ── */}
       {view === 'overall' && (
         <>
@@ -628,7 +641,6 @@ function FeedbackPage() {
               <Card style={{ padding: '20px 24px' }}>
                 <div style={{ fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: C.inkMute, marginBottom: 14 }}>Summary</div>
 
-                {/* Strengths */}
                 <div style={{ marginBottom: 16 }}>
                   <div style={{ fontSize: '0.68rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.09em', color: C.success, marginBottom: 8 }}>Identified Strengths</div>
                   {[
@@ -677,7 +689,7 @@ function FeedbackPage() {
                       <div style={{ fontSize: '0.7rem', fontWeight: 700, color: C.kimb, textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 6 }}>{fs.title}</div>
                       {fs.items.map(item => (
                         <div key={item.term} style={{ display: 'flex', gap: 8, marginBottom: 3, fontSize: '0.8rem', color: C.inkMid, lineHeight: 1.5 }}>
-                          <span style={{ fontWeight: 700, minWidth: 120, flexShrink: 0, color: C.ink }}>{item.term}</span>
+                          <span style={{ fontWeight: 700, minWidth: 130, flexShrink: 0, color: C.ink }}>{item.term}</span>
                           <span>{item.desc}</span>
                         </div>
                       ))}
@@ -693,7 +705,7 @@ function FeedbackPage() {
                   <span style={{ fontSize: '1.3rem' }}>📄</span>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontWeight: 600, color: C.ink, fontSize: '0.85rem' }}>Full Performance Report — Jordan Mills</div>
-                    <div style={{ fontSize: '0.72rem', color: C.inkLt, marginTop: 2 }}>PDF · 3 May 2026 · All sessions · Law Enforcement</div>
+                    <div style={{ fontSize: '0.72rem', color: C.inkLt, marginTop: 2 }}>PDF · 3 May 2026 · All sessions</div>
                   </div>
                   <GhostBtn style={{ padding: '6px 14px', fontSize: '0.72rem' }}>⬇ Download</GhostBtn>
                   <GhostBtn style={{ padding: '6px 14px', fontSize: '0.72rem' }}>✉ Email</GhostBtn>
@@ -766,7 +778,6 @@ function FeedbackPage() {
             {/* LEFT */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
 
-              {/* Score header */}
               <Card style={{ padding: '24px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 20 }}>
                   <ScoreRing score={session.score} color={session.accentColor} />
@@ -784,13 +795,11 @@ function FeedbackPage() {
                 <MetricBars metrics={session.metrics} />
               </Card>
 
-              {/* Written feedback */}
               <Card style={{ padding: '20px 24px' }}>
                 <div style={{ fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: C.inkMute, marginBottom: 12 }}>Written Feedback</div>
                 <NoteCards notes={session.notes} />
               </Card>
 
-              {/* Session report download */}
               <Card style={{ padding: '18px 20px' }}>
                 <div style={{ fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: C.inkMute, marginBottom: 12 }}>Session Report</div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '12px 14px', background: C.surface, borderRadius: 3, border: `1.5px solid ${C.borderL}` }}>
